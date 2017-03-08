@@ -25,47 +25,45 @@ public class MainMenuController {
 	 * @param event
 	 */
 	public void btnStartPomorodo(ActionEvent event){
-		Parent imageViewScreenParent = null;
+		Parent loader = null;
 		try {
-			imageViewScreenParent = FXMLLoader.load(getClass().getResource("/fxml/StartPomorodo.fxml"));
+			loader = FXMLLoader.load(getClass().getResource("/fxml/StartPomorodo.fxml"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Scene imageViewScene = new Scene(imageViewScreenParent);
-		//imageViewScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		Stage imageViewStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		imageViewStage.setScene(imageViewScene);
-		imageViewStage.show();
+		Scene scene = new Scene(loader);
+		scene.getStylesheets().add(getClass().getResource("/style/startPomorodo.css").toExternalForm());
+		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		stage.setAlwaysOnTop(true);
+		stage.setScene(scene);
+		stage.show();
 	}
 	
 	public void btnSeeGraph(ActionEvent event){
-		Parent imageViewScreenParent = null;
+		Parent loader = null;
 		try {
-			imageViewScreenParent = FXMLLoader.load(getClass().getResource("/fxml/Graph.fxml"));
+			loader = FXMLLoader.load(getClass().getResource("/fxml/Graph.fxml"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Scene imageViewScene = new Scene(imageViewScreenParent);
-		//imageViewScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		Stage imageViewStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		imageViewStage.setScene(imageViewScene);
-		imageViewStage.show();
+		Scene scene = new Scene(loader);
+		//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		stage.setScene(scene);
+		stage.show();
 	}
 	
 	public void btnSettings(ActionEvent event){
-		Parent imageViewScreenParent = null;
+		Parent loader = null;
 		try {
-			imageViewScreenParent = FXMLLoader.load(getClass().getResource("/fxml/Settings.fxml"));
+			loader = FXMLLoader.load(getClass().getResource("/fxml/Settings.fxml"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Scene imageViewScene = new Scene(imageViewScreenParent);
-		//imageViewScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		Stage imageViewStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		imageViewStage.setScene(imageViewScene);
-		imageViewStage.show();
+		Scene scene = new Scene(loader);
+		//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		stage.setScene(scene);
+		stage.show();
 	}
 }
