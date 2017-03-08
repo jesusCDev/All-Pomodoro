@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="500.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainMenuController">
+   <children>
+      <Button fx:id="btnStartPomorodo" layoutX="200.0" layoutY="131.0" mnemonicParsing="false" onAction="#btnStartPomorodo" text="Start Pomorodo" />
+      <Button fx:id="btnSeeGraph" layoutX="204.0" layoutY="225.0" mnemonicParsing="false" onAction="#btnSeeGraph" text="Graph Of Data" />
+      <Button fx:id="btnSettings" layoutX="221.0" layoutY="336.0" mnemonicParsing="false" onAction="#btnSettings" text="Settings" />
+      <Label layoutX="211.0" layoutY="51.0" text="All Promorodo" />
+   </children>
+</AnchorPane>
