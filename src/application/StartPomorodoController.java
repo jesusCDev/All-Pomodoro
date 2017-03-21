@@ -32,7 +32,7 @@ public class StartPomorodoController {
 	TimeKeeper timer;
 	
 	StartPomorodoController(){
-		timer = new TimeKeeper();
+		timer = new TimeKeeper(lbTimer);
 	}
 	
 	public void playPauseBtn(ActionEvent e){

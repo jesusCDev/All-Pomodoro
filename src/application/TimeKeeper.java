@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javafx.scene.control.Label;
+
 public class TimeKeeper {
 
 	Timer timer;
@@ -33,8 +35,10 @@ public class TimeKeeper {
 	int timerTime = longBreak;
 
 	boolean playing = false;
+	Label lbTimer;
 	
-	TimeKeeper(){
+	TimeKeeper(Label lbTimer){
+		this.lbTimer = lbTimer;
 		timer = new Timer();
 		toolkit = Toolkit.getDefaultToolkit();
 		setValues();
@@ -47,15 +51,16 @@ public class TimeKeeper {
 			shortBreak = Integer.parseInt(br.readLine());
 			workTime = Integer.parseInt(br.readLine());
 			lengthTillLongBreak = Integer.parseInt(br.readLine());
+			timerTime = longBreak;
+			tillBreak = lengthTillLongBreak;
 			br.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		timerTime = longBreak;
-		tillBreak = lengthTillLongBreak;
 	}
 	
 	public void playAndPause(){
+		lbTimer.setText("Hello World");
 		if(playing == false){
 			if(breakOrWork == 1){
 				if(tillBreak > 0){
