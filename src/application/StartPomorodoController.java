@@ -1,5 +1,8 @@
 package application;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -26,11 +29,32 @@ public class StartPomorodoController {
 	
 	@FXML
 	Label lbTimer;
+	TimeKeeper timer;
+	
+	StartPomorodoController(){
+		timer = new TimeKeeper();
+	}
 	
 	public void playPauseBtn(ActionEvent e){
-		System.out.println("Start");
-		
-
+		System.out.println("Play/Pause");
+		timer.playAndPause();
+	}
+	
+	public void skipBtn(ActionEvent e){
+		System.out.println("Skip");
+		SetWindowSize();
+		timer.skip();
+	}
+	
+	public void resetBtn(ActionEvent e){
+		System.out.println("Reset");
+		timer.reset();
+	}
+	
+	public void initialize(){
+	}
+	
+	public void SetWindowSize(){
 		//Scene scene = ((Node) e.getSource()).getScene();
 		Scene scene = btnPlayAndPause.getScene();
 		scene.widthProperty().addListener(new ChangeListener<Number>() {
@@ -46,18 +70,6 @@ public class StartPomorodoController {
 		        }
 		    }
 		});
-		
 	}
 	
-	public void skipBtn(ActionEvent e){
-		System.out.println("Skip");
-	}
-	
-	public void resetBtn(ActionEvent e){
-		System.out.println("Reset");
-	}
-	
-	public void initialize(){
-		
-	}
 }

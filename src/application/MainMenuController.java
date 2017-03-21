@@ -35,6 +35,8 @@ public class MainMenuController {
 		scene.getStylesheets().add(getClass().getResource("/style/startPomorodo.css").toExternalForm());
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.setAlwaysOnTop(true);
+		stage.setMinWidth(250.0);
+		stage.setMinHeight(200.0);
 		stage.setScene(scene);
 		stage.show();
 	}
