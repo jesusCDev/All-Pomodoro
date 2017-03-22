@@ -2,6 +2,12 @@
 .button{
 	-fx-padding: 10px;
 }
-#mainBorderPane{
+#hboxBottom{
+	-fx-background-color: #e53935;
+}
+#hboxCenter{
+	-fx-background-color: #e53935;
+}
+#hboxTop{
 	-fx-background-color: #e53935;
 }

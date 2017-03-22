@@ -1,9 +1,15 @@
 package application;
 
+import java.util.prefs.Preferences;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.text.Font;
 
 public class StartPomorodoController {
 
@@ -16,17 +22,34 @@ public class StartPomorodoController {
 	TimeKeeper timer;
 	
 	public void initialize(){
-		timer = new TimeKeeper(lbTimer);
+		Preferences pref = Preferences.userRoot();
+		
+		int seconds = (pref.getInt("workTimeDuration", 25) * 60);
+		int minLeft = (seconds/60);
+		int secondsLeft = (seconds - (minLeft * 60));
+		if((seconds%60) == 0){
+			lbTimer.setText(minLeft + ":" + "00");
+		}else if(seconds == 0){
+			lbTimer.setText("00:00");
+		}else if(secondsLeft < 10){
+			lbTimer.setText(minLeft + ":0" + secondsLeft);
+		}else{
+			lbTimer.setText(minLeft + ":" + secondsLeft);
+		}
+		
+		timer = new TimeKeeper(lbTimer, pref.get("continouseMode", "Yes"));
 	}
 	
 	@FXML
 	public void playPauseBtn(ActionEvent e){
+		SetWindowSize();
 		System.out.println("Play/Pause");
-		timer.playAndPause();
-		if(playPauseTracker == 1){
+		if(playPauseTracker == 1 || btnPlayAndPause.getText().equals("Pause")){
+			timer.playAndPause(btnPlayAndPause);
 			btnPlayAndPause.setText("Play");
 			playPauseTracker *= -1;
 		}else{
+			timer.playAndPause(btnPlayAndPause);
 			btnPlayAndPause.setText("Pause");
 			playPauseTracker *= -1;
 		}
@@ -35,7 +58,7 @@ public class StartPomorodoController {
 	@FXML
 	public void skipBtn(ActionEvent e){
 		System.out.println("Skip");
-		//SetWindowSize();
+		SetWindowSize();
 		timer.skip();
 	}
 	
@@ -45,7 +68,6 @@ public class StartPomorodoController {
 		timer.reset();
 	}
 	
-	/**
 	public void SetWindowSize(){
 		//Scene scene = ((Node) e.getSource()).getScene();
 		Scene scene = btnPlayAndPause.getScene();
@@ -63,6 +85,5 @@ public class StartPomorodoController {
 		    }
 		});
 	}
-	**/
 	
 }
