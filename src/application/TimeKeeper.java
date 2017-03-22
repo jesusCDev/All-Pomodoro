@@ -8,11 +8,15 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Label;
+import javafx.util.Duration;
 
 public class TimeKeeper {
 
-	Timer timer;
 	Toolkit toolkit;
 	//time of how long a long break will take
 	int longBreak = 10;
@@ -21,27 +25,40 @@ public class TimeKeeper {
 	//time of how long a work session will take
 	int workTime = 25;
 	
+	//this will change depending on which break or period it is
+	int timerTimeTracker = workTime;
+	
 	//Amount of sessions you have done already
 	int workSession= 0;
 	//switches to negative to positive depending whether there is a break or not
-	int breakOrWork = 1;
-	//this keeps track of the time till a long break
-	int lengthTillLongBreak = 3;
-	//
-	int tillBreak = 3;
+	int breakOrWork = -1;
 	//this is just the current time at which we are in
 	int currentTime = 0;
-	//this will change depending on which break or period it is
-	int timerTime = longBreak;
+	//Which timer is playing
+	int whichTimerIsPlaying = 0;
+
+	//this keeps track of the time till a long break
+	int lengthTillLongBreak = 3;
+	//this is keeping tack till long break
+	int lengthTillLongBreakTracker = 3;
 
 	boolean playing = false;
+	boolean paused = false;
+	
 	Label lbTimer;
+
+	Timeline longBreakTimeLine;
+	Timeline shortBreakTimeLine;
+	Timeline workTimeLIne;
 	
 	TimeKeeper(Label lbTimer){
 		this.lbTimer = lbTimer;
-		timer = new Timer();
 		toolkit = Toolkit.getDefaultToolkit();
 		setValues();
+	}
+	
+	public void updateValues(int time){
+		lbTimer.setText(Integer.toString(time));
 	}
 	
 	public void setValues(){
@@ -51,8 +68,8 @@ public class TimeKeeper {
 			shortBreak = Integer.parseInt(br.readLine());
 			workTime = Integer.parseInt(br.readLine());
 			lengthTillLongBreak = Integer.parseInt(br.readLine());
-			timerTime = longBreak;
-			tillBreak = lengthTillLongBreak;
+			timerTimeTracker = workTime;
+			lengthTillLongBreakTracker = lengthTillLongBreak;
 			br.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -60,77 +77,138 @@ public class TimeKeeper {
 	}
 	
 	public void playAndPause(){
-		lbTimer.setText("Hello World");
 		if(playing == false){
 			if(breakOrWork == 1){
-				if(tillBreak > 0){
-					playing = true;
-					timerTime = shortBreak;
+				if(lengthTillLongBreakTracker > 0){
 					
-					timer.schedule(new TimerTask() {
+					if(paused == false){
+						timerTimeTracker = shortBreak;
+					}else{
+						paused = false;
+					}
+
+					whichTimerIsPlaying = 1;
+					playing = true;
+					longBreakTimeLine = new Timeline();
+					longBreakTimeLine.setCycleCount(Timeline.INDEFINITE);
+					KeyFrame frame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+						
 						@Override
-						public void run() {
+						public void handle(ActionEvent event) {
 							currentTime++;
-							if(timerTime > 0){
-								timerTime--;
+							if(timerTimeTracker > 0){
+								timerTimeTracker--;
+								updateValues(timerTimeTracker);
+								System.out.println(timerTimeTracker);
 							}else{
 			            		playing = false;
 								breakOrWork *= -1;
-								tillBreak--;
+								lengthTillLongBreakTracker--;
 								toolkit.beep();
-								timer.cancel();
+								longBreakTimeLine.stop();
+								playAndPause();
 							}
+							
 						}
-					}, 0, 1000);
+					});
+					longBreakTimeLine.getKeyFrames().add(frame);
+					longBreakTimeLine.playFromStart();
 				}else{
-					playing = true;
-					tillBreak = lengthTillLongBreak;
-					timerTime = longBreak;
 					
-					timer.schedule(new TimerTask(){
+					if(paused == false){
+						timerTimeTracker = longBreak;
+					}else{
+						paused = false;
+					}
+
+					lengthTillLongBreakTracker = lengthTillLongBreak;
+					whichTimerIsPlaying = 2;
+					playing = true;
+					shortBreakTimeLine = new Timeline();
+					shortBreakTimeLine.setCycleCount(Timeline.INDEFINITE);
+					KeyFrame frame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+						
 						@Override
-						public void run(){
+						public void handle(ActionEvent event) {
 			            	currentTime++;
-			            	if(timerTime > 0){
-			            		timerTime--;
+			            	if(timerTimeTracker > 0){
+			            		timerTimeTracker--;
+								updateValues(timerTimeTracker);
+			            		System.out.println(timerTimeTracker);
 			            	}else{
 			            		playing = false;
 			            		breakOrWork *= -1;
 			            		toolkit.beep();
-			            		timer.cancel();
+			            		System.out.println("Done");
+			            		shortBreakTimeLine.stop();
+			            		playAndPause();
 			            	}
-							
 						}
-					}, 0, 1000);
+					});
+					shortBreakTimeLine.getKeyFrames().add(frame);
+					shortBreakTimeLine.playFromStart();
 				}
 			}else{
-				timerTime = workTime;
-				playing = true;
 				
-				timer.schedule(new TimerTask(){
+				if(paused == false){
+					timerTimeTracker = workTime;
+				}else{
+					paused = true;
+				}
+				whichTimerIsPlaying = 3;
+				playing = true;
+
+				workTimeLIne = new Timeline();
+				workTimeLIne.setCycleCount(Timeline.INDEFINITE);
+				KeyFrame frame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
 					@Override
-					public void run(){
+					public void handle(ActionEvent event) {
 		            	currentTime++;
-		            	if(timerTime > 0){
-		            		timerTime--;
+		            	if(timerTimeTracker > 0){
+		            		timerTimeTracker--;
+							updateValues(timerTimeTracker);
+		            		System.out.println(timerTimeTracker);
 		            	}else{
 		            		playing = false;
 		            		breakOrWork *= -1;
 		            		toolkit.beep();
-		            		timer.cancel();
+		            		System.out.println("Done");
+		            		workTimeLIne.stop();
+		            		playAndPause();
 		            	}
 					}
-				}, 0, 1000);
+				});
+				
+				workTimeLIne.getKeyFrames().add(frame);
+				workTimeLIne.playFromStart();
 			}
 		}else{
-			timer.cancel();
+			if(whichTimerIsPlaying == 1){
+				longBreakTimeLine.pause();
+				paused = true;
+			}else if(whichTimerIsPlaying == 2){
+				shortBreakTimeLine.pause();
+				paused = true;
+			}else{
+				workTimeLIne.pause();
+				paused = true;
+			}
+			playing = false;
 		}
 	}
 	
 	public void skip(){
-		if(playing == true){
-			timer.cancel();
+		if(playing == true || paused == true){
+			if(whichTimerIsPlaying == 1){
+				longBreakTimeLine.stop();
+			}else if(whichTimerIsPlaying == 2){
+				shortBreakTimeLine.stop();
+			}else{
+				workTimeLIne.stop();
+			}
+			playing = false;
 			breakOrWork *= -1;
+			paused = false;
 			playAndPause();
 		}else{
 			System.out.println("Press Play First");
@@ -138,8 +216,16 @@ public class TimeKeeper {
 	}
 	
 	public void reset(){
-		if(playing == true){
-			timer.cancel();
+		if(playing == true || paused == true){
+			if(whichTimerIsPlaying == 1){
+				longBreakTimeLine.stop();
+			}else if(whichTimerIsPlaying == 2){
+				shortBreakTimeLine.stop();
+			}else{
+				workTimeLIne.stop();
+			}
+			playing = false;
+			paused = false;
 			playAndPause();
 		}else{
 			System.out.println("Press Play First");

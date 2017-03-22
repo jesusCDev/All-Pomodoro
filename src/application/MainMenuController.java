@@ -27,7 +27,7 @@ public class MainMenuController {
 	public void btnStartPomorodo(ActionEvent event){
 		Parent loader = null;
 		try {
-			loader = FXMLLoader.load(getClass().getResource("/fxml/StartPomorodo.fxml"));
+			loader = FXMLLoader.load(getClass().getResource("StartPomorodo.fxml"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -49,7 +49,7 @@ public class MainMenuController {
 			e.printStackTrace();
 		}
 		Scene scene = new Scene(loader);
-		//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.setScene(scene);
 		stage.show();
@@ -63,7 +63,7 @@ public class MainMenuController {
 			e.printStackTrace();
 		}
 		Scene scene = new Scene(loader);
-		//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.setScene(scene);
 		stage.show();

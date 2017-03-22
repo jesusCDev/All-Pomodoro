@@ -2,3 +2,6 @@
 .button{
 	-fx-padding: 10px;
 }
+#mainBorderPane{
+	-fx-background-color: #e53935;
+}

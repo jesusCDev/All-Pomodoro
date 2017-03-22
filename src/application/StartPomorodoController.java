@@ -1,59 +1,51 @@
 package application;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.text.Font;
-import javafx.stage.Stage;
 
 public class StartPomorodoController {
 
 	@FXML
-	Button btnRest;
-
+	Label lbTimer;
 	@FXML
 	Button btnPlayAndPause;
-
-	@FXML
-	Button btnNext;
 	
-	@FXML
-	Label lbTimer;
+	int playPauseTracker = 1;
 	TimeKeeper timer;
 	
-	StartPomorodoController(){
+	public void initialize(){
 		timer = new TimeKeeper(lbTimer);
 	}
 	
+	@FXML
 	public void playPauseBtn(ActionEvent e){
 		System.out.println("Play/Pause");
 		timer.playAndPause();
+		if(playPauseTracker == 1){
+			btnPlayAndPause.setText("Play");
+			playPauseTracker *= -1;
+		}else{
+			btnPlayAndPause.setText("Pause");
+			playPauseTracker *= -1;
+		}
 	}
 	
+	@FXML
 	public void skipBtn(ActionEvent e){
 		System.out.println("Skip");
-		SetWindowSize();
+		//SetWindowSize();
 		timer.skip();
 	}
 	
+	@FXML
 	public void resetBtn(ActionEvent e){
 		System.out.println("Reset");
 		timer.reset();
 	}
 	
-	public void initialize(){
-	}
-	
+	/**
 	public void SetWindowSize(){
 		//Scene scene = ((Node) e.getSource()).getScene();
 		Scene scene = btnPlayAndPause.getScene();
@@ -71,5 +63,6 @@ public class StartPomorodoController {
 		    }
 		});
 	}
+	**/
 	
 }
