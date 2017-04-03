@@ -31,8 +31,6 @@ public class TimeKeeper {
 	//this will change depending on which break or period it is
 	int timerTimeTracker;
 	
-	//Amount of sessions you have done already
-	int workSession= 0;
 	//switches to negative to positive depending whether there is a break or not
 	int breakOrWork = -1;
 	//this is just the current time at which we are in
@@ -56,6 +54,13 @@ public class TimeKeeper {
 	Timeline shortBreakTimeLine;
 	Timeline workTimeLIne;
 	
+	Preferences pref;
+	
+	/**
+	 * This is teh constructor that lets you pass in values that we will be using
+	 * @param lbTimer the label we will be editing
+	 * @param contiousMode whether continouse mode is on or not
+	 */
 	TimeKeeper(Label lbTimer, String contiousMode){
 		this.contiousMode = contiousMode;
 		this.lbTimer = lbTimer;
@@ -63,11 +68,16 @@ public class TimeKeeper {
 		setValues();
 	}
 	
+	/**
+	 * This method will update the label
+	 * @param seconds
+	 */
 	public void updateValues(int seconds){
 		int minLeft = (seconds/60);
 		int secondsLeft = (seconds - (minLeft * 60));
 		if((seconds%60) == 0){
 			lbTimer.setText(minLeft + ":" + "00");
+			pref.putInt("currentTime", currentTime);
 		}else if(seconds == 0){
 			lbTimer.setText("00:00");
 		}else if(secondsLeft < 10){
@@ -77,8 +87,11 @@ public class TimeKeeper {
 		}
 	}
 	
+	/**
+	 * This method sets the values incase the app is exited and come back
+	 */
 	public void setValues(){
-		Preferences pref = Preferences.userRoot();
+		pref = Preferences.userRoot();
 		longBreak = (pref.getInt("longBreakDuration", 10) * 60);
 		shortBreak = (pref.getInt("shortBreakDuration", 5) * 60);
 		workTime = (pref.getInt("workTimeDuration", 25) * 60);
@@ -94,7 +107,11 @@ public class TimeKeeper {
 				if(lengthTillLongBreakTracker > 0){
 					
 					if(paused == false){
-						timerTimeTracker = shortBreak;
+						if(pref.getBoolean("resume", false) == false){
+							timerTimeTracker = shortBreak;
+						}else{
+							pref.putBoolean("resume", false);
+						}
 					}else{
 						paused = false;
 					}
@@ -133,7 +150,12 @@ public class TimeKeeper {
 				}else{
 					
 					if(paused == false){
-						timerTimeTracker = longBreak;
+
+						if(pref.getBoolean("resume", false) == false){
+							timerTimeTracker = longBreak;
+						}else{
+							pref.putBoolean("resume", false);
+						}
 					}else{
 						paused = false;
 					}
@@ -173,7 +195,12 @@ public class TimeKeeper {
 			}else{
 				
 				if(paused == false){
-					timerTimeTracker = workTime;
+
+					if(pref.getBoolean("resume", false) == false){
+						timerTimeTracker = workTime;
+					}else{
+						pref.putBoolean("resume", false);
+					}
 				}else{
 					paused = true;
 				}
@@ -224,12 +251,17 @@ public class TimeKeeper {
 		}
 	}
 	
+	/**
+	 * This method will ahndle the skip button to skip the timer to the next period
+	 */
 	public void skip(){
 		if(playing == true || paused == true){
 			if(whichTimerIsPlaying == 1){
 				longBreakTimeLine.stop();
+				lengthTillLongBreakTracker--;
 			}else if(whichTimerIsPlaying == 2){
 				shortBreakTimeLine.stop();
+				lengthTillLongBreakTracker = amountOfCyclesTillLongBreak;
 			}else{
 				workTimeLIne.stop();
 			}
@@ -242,7 +274,51 @@ public class TimeKeeper {
 		}
 	}
 	
+	/**
+	 * this method resets the timer by canceling on and restarting it
+	 */
 	public void reset(){
+		if(playing == true || paused == true){
+			if(whichTimerIsPlaying == 1){
+				currentTime = (currentTime - (longBreak - timerTimeTracker));
+				System.out.println("CurrentTime: " + currentTime);
+				System.out.println("longBreak: " + longBreak + " TimerTimeTracker: " + timerTimeTracker);
+				System.out.println("Subtracted: " + (longBreak - timerTimeTracker));
+				longBreakTimeLine.stop();
+			}else if(whichTimerIsPlaying == 2){
+				currentTime = (currentTime - (shortBreak - timerTimeTracker));
+				System.out.println("CurrentTime: " + currentTime);
+				System.out.println("shortBreak: " + shortBreak + " TimerTimeTracker: " + timerTimeTracker);
+				System.out.println("Subtracted: " + (shortBreak - timerTimeTracker));
+				shortBreakTimeLine.stop();
+			}else{
+				currentTime = (currentTime - (workTime - timerTimeTracker));
+				System.out.println("CurrentTime: " + currentTime);
+				System.out.println("workTime: " + workTime + " TimerTimeTracker: " + timerTimeTracker);
+				System.out.println("Subtracted: " + (workTime - timerTimeTracker));
+				workTimeLIne.stop();
+			}
+			playing = false;
+			paused = false;
+			playAndPause(btnPlayAndPause);
+		}else{
+			System.out.println("Press Play First");
+		}
+	}
+	
+	/**
+	 * This class wills  stop the timer
+	 * and save its current position
+	 */
+	public void stop(){
+
+		pref.putInt("resumeTime", timerTimeTracker);
+		pref.putInt("resumeWhichTimerIsPlaying", whichTimerIsPlaying);
+		pref.putInt("lengthTillLongBreakTracker", lengthTillLongBreakTracker);
+		pref.putInt("resumebreakOrWork", breakOrWork);
+		pref.putInt("resumecurrentTime", currentTime);
+		pref.putBoolean("resume", true);
+		
 		if(playing == true || paused == true){
 			if(whichTimerIsPlaying == 1){
 				longBreakTimeLine.stop();
@@ -253,9 +329,21 @@ public class TimeKeeper {
 			}
 			playing = false;
 			paused = false;
-			playAndPause(btnPlayAndPause);
 		}else{
 			System.out.println("Press Play First");
 		}
+	}
+	
+	/**
+	 * this will keep the time
+	 * this will keep which work or thing is
+	 * and it will set all the values for them
+	 */
+	public void resume(){
+		timerTimeTracker = pref.getInt("resumeTime", timerTimeTracker);
+		whichTimerIsPlaying = pref.getInt("resumeWhichTimerIsPlaying", whichTimerIsPlaying);
+		lengthTillLongBreakTracker = pref.getInt("lengthTillLongBreakTracker", lengthTillLongBreakTracker);
+		breakOrWork = pref.getInt("resumebreakOrWork", breakOrWork);
+		currentTime = pref.getInt("resumecurrentTime", currentTime);
 	}
 }

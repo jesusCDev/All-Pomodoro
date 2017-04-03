@@ -38,21 +38,31 @@ public class SettingsController {
 		}
 	}
 	
+	/**
+	 * This method will allow the user to returen to the previous screen
+	 * by creating a new stage and scene
+	 * @param e
+	 */
 	public void goBackToMainMenu(ActionEvent e){
 		Parent loader = null;
 		try {
-			loader = FXMLLoader.load(getClass().getResource("/fxml/MainMenu.fxml"));
+			loader = FXMLLoader.load(getClass().getResource("/fxml/StartPomorodo.fxml"));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 		Scene scene = new Scene(loader);
-		scene.getStylesheets().add(getClass().getResource("/style/application.css").toExternalForm());
+		scene.getStylesheets().add(getClass().getResource("/style/startPomorodo.css").toExternalForm());
 		Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
 		stage.setAlwaysOnTop(true);
+		stage.setMinWidth(250.0);
+		stage.setMinHeight(200.0);
 		stage.setScene(scene);
 		stage.show();
 	}
 	
+	/**
+	 * This method will set all the values as soon as they are loaded
+	 */
 	public void initialize(){
 		Preferences pref = Preferences.userRoot();
 		tfLongBreakDuration.setPromptText(Integer.toString(pref.getInt("longBreakDuration", 10)));
@@ -67,6 +77,10 @@ public class SettingsController {
 		}
 	}
 	
+	/**
+	 * This method will effect the textview of the long break and allow you to edit it
+	 * @param e
+	 */
 	public void changeLongBreakTime(ActionEvent e){
 		try{
 			Preferences pref = Preferences.userRoot();
@@ -76,6 +90,10 @@ public class SettingsController {
 		}
 	}
 	
+	/**
+	 * This method will affect the textview of the short break and alllow you to edt it
+	 * @param e
+	 */
 	public void changeShortBreakTime(ActionEvent e){
 		Preferences pref = Preferences.userRoot();
 		try{
@@ -85,6 +103,10 @@ public class SettingsController {
 		}
 	}
 	
+	/**
+	 * This method will affect the textview of the work time and allow you to edit it
+	 * @param e
+	 */
 	public void changeWorkTime(ActionEvent e){
 		try{
 		Preferences pref = Preferences.userRoot();
@@ -94,6 +116,11 @@ public class SettingsController {
 		}
 		
 	}
+	
+	/**
+	 * This method will afect the amount of short breaks until the long break
+	 * @param e
+	 */
 	public void cahngeAmountOfTimesTillLongBreak(ActionEvent e){
 		try{
 			Preferences pref = Preferences.userRoot();
