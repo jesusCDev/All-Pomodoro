@@ -42,9 +42,11 @@ public class Main extends Application {
 	 */
 	@Override
 	public void stop(){
-		Preferences prefs = Preferences.userRoot();
-		int currentTime = prefs.getInt("currentTime", 0);
-		prefs.putInt("currentTime", 0);
-		prefs.putInt("totalMinsWorked", currentTime);
+		Preferences pref = Preferences.userRoot();
+		int currentTime = pref.getInt("currentTime", 0);
+		pref.putInt(pref.get("CurrentProject", "All Pomorodo"), (pref.getInt(pref.get("CurrentProject", "All Pomorodo"), 0) + currentTime));
+		pref.put("CurrentProject", "All Pomorodo");
+		pref.putInt("totalMinsWorked", currentTime);
+		pref.putInt("currentTime", 0);
 	}
 }

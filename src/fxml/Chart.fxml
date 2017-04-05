@@ -9,13 +9,14 @@
    <center>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="labelOne" text="Label" />
-            <Label fx:id="labelTwo" text="Label" />
-            <Label fx:id="labelThree" text="Label" />
+            <Label fx:id="labelOne" text="OverAll:" />
+            <Label fx:id="labelTwo" text="School" />
+            <Label fx:id="labelThree" text="Program" />
+            <Label fx:id="labelFour" text="workout" />
          </children>
       </HBox>
    </center>
    <top>
-      <Button onAction="#goBackToMainMenu" mnemonicParsing="false" text="&lt;----" BorderPane.alignment="CENTER" />
+      <Button mnemonicParsing="false" onAction="#goBackToMainMenu" text="&lt;----" BorderPane.alignment="CENTER" />
    </top>
 </BorderPane>

@@ -1,10 +1,15 @@
 package application;
 
+import java.awt.Toolkit;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.prefs.Preferences;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +18,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -29,10 +36,14 @@ public class StartPomorodoController {
 	HBox hboxCenter;
 	@FXML
 	HBox hboxTop;
+	@FXML
+	Spinner spinnerProjects;
 	
 	int playPauseTracker = 1;
 	TimeKeeper timer;
+	Toolkit toolKit;
 	
+	String project = "All Pomorodo";
 	/**
 	 * This button action will let you see your settings and lets you affect them
 	 * you can change period amounts
@@ -59,6 +70,7 @@ public class StartPomorodoController {
 	 * @param event
 	 */
 	public void btnSeeGraph(ActionEvent event){
+		timer.save();
 		timer.stop();
 		Parent loader = null;
 		try {
@@ -78,9 +90,24 @@ public class StartPomorodoController {
 	 */
 	public void initialize(){
 		Preferences pref = Preferences.userRoot();
-
-		timer = new TimeKeeper(lbTimer, pref.get("continouseMode", "Yes"));
 		
+		toolKit = Toolkit.getDefaultToolkit();
+
+		timer = new TimeKeeper(lbTimer, pref.get("continousMode", "Yes"), hboxTop, hboxCenter, hboxBottom, spinnerProjects, btnPlayAndPause);
+		
+		String[] projectsList = pref.get("projects", "All Pomorodo,wordTwo,wordThree,wordFour,wordFive,wordSix").split(",");
+		ObservableList<String> projects = FXCollections.observableArrayList(projectsList);
+		SpinnerValueFactory<String> valueFactory = new SpinnerValueFactory.ListSpinnerValueFactory<String>(projects);
+		valueFactory.setValue(pref.get("CurrentProject", "All Pomorodo"));
+		spinnerProjects.setValueFactory(valueFactory);
+	    spinnerProjects.getStyleClass().add(spinnerProjects.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+		
+	    spinnerProjects.valueProperty().addListener((obs, oldValue, newValue) -> 
+	    
+	    project = timer.hardReset(newValue.toString())
+	    
+	    );   
+	    
 		int seconds;
 		if(pref.getInt("resumeTime", 0) != 0){
 			seconds = (pref.getInt("resumeTime", 0));
@@ -89,23 +116,11 @@ public class StartPomorodoController {
 		}else{
 			seconds = (pref.getInt("workTimeDuration", 25) * 60);
 		}
-
-		System.out.println("Seconds: " + seconds);
+		
+		//displayTime
 		
 		int minLeft = (seconds/60);
-		int secondsLeft = (seconds - (minLeft * 60));	
-		if((seconds%60) == 0){
-			lbTimer.setText(minLeft + ":" + "00");
-		}else if(seconds == 0){
-			lbTimer.setText("00:00");
-		}else if(secondsLeft < 10){
-			lbTimer.setText(minLeft + ":0" + secondsLeft);
-		}else{
-			lbTimer.setText(minLeft + ":" + secondsLeft);
-		}
-		
-		minLeft = (seconds/60);
-		secondsLeft = (seconds - (minLeft * 60));
+		int secondsLeft = (seconds - (minLeft * 60));
 		if((seconds%60) == 0){
 			lbTimer.setText(minLeft + ":" + "00");
 		}else if(seconds == 0){
@@ -124,20 +139,25 @@ public class StartPomorodoController {
 	 */
 	@FXML
 	public void playPauseBtn(ActionEvent e){
+		toolKit.beep();
 		SetWindowSize();
 		System.out.println("Play/Pause");
 		if(playPauseTracker == 1 || btnPlayAndPause.getText().equals("Pause")){
+			spinnerProjects.setDisable(true);
 			hboxBottom.setStyle("-fx-background-color: #00E676");
 			hboxCenter.setStyle("-fx-background-color: #00E676");
 			hboxTop.setStyle("-fx-background-color: #00E676");
-			timer.playAndPause(btnPlayAndPause);
+			
+			timer.playAndPause();
 			btnPlayAndPause.setText("Play");
 			playPauseTracker *= -1;
 		}else{
+			spinnerProjects.setDisable(false);
 			hboxBottom.setStyle("-fx-background-color: #FFFF00");
 			hboxCenter.setStyle("-fx-background-color: #FFFF00");
 			hboxTop.setStyle("-fx-background-color: #FFFF00");
-			timer.playAndPause(btnPlayAndPause);
+			
+			timer.playAndPause();
 			btnPlayAndPause.setText("Pause");
 			playPauseTracker *= -1;
 		}
@@ -150,6 +170,7 @@ public class StartPomorodoController {
 	 */
 	@FXML
 	public void skipBtn(ActionEvent e){
+		toolKit.beep();
 		System.out.println("Skip");
 		SetWindowSize();
 		timer.skip();
@@ -162,6 +183,7 @@ public class StartPomorodoController {
 	 */
 	@FXML
 	public void resetBtn(ActionEvent e){
+		toolKit.beep();
 		System.out.println("Reset");
 		timer.reset();
 	}

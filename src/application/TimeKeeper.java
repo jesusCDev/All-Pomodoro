@@ -15,6 +15,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 
 public class TimeKeeper {
@@ -44,11 +46,16 @@ public class TimeKeeper {
 	int lengthTillLongBreakTracker = 3;
 
 	String contiousMode;
+	String project = "All Pomorodo";
 	boolean playing = false;
 	boolean paused = false;
 	
 	Label lbTimer;
 	Button btnPlayAndPause;
+	HBox hboxTop;
+	HBox hboxCenter;
+	HBox hboxBottom;
+	Spinner spinnerProjects;
 
 	Timeline longBreakTimeLine;
 	Timeline shortBreakTimeLine;
@@ -61,7 +68,12 @@ public class TimeKeeper {
 	 * @param lbTimer the label we will be editing
 	 * @param contiousMode whether continouse mode is on or not
 	 */
-	TimeKeeper(Label lbTimer, String contiousMode){
+	TimeKeeper(Label lbTimer, String contiousMode, HBox hboxTop, HBox hboxCenter, HBox hboxBottom, Spinner spinnerProjects, Button btnPlayAndPause){
+		this.btnPlayAndPause = btnPlayAndPause;
+		this.spinnerProjects = spinnerProjects;
+		this.hboxTop = hboxTop;
+		this.hboxCenter = hboxCenter;
+		this.hboxBottom = hboxBottom;
 		this.contiousMode = contiousMode;
 		this.lbTimer = lbTimer;
 		toolkit = Toolkit.getDefaultToolkit();
@@ -77,7 +89,6 @@ public class TimeKeeper {
 		int secondsLeft = (seconds - (minLeft * 60));
 		if((seconds%60) == 0){
 			lbTimer.setText(minLeft + ":" + "00");
-			pref.putInt("currentTime", currentTime);
 		}else if(seconds == 0){
 			lbTimer.setText("00:00");
 		}else if(secondsLeft < 10){
@@ -85,6 +96,7 @@ public class TimeKeeper {
 		}else{
 			lbTimer.setText(minLeft + ":" + secondsLeft);
 		}
+		pref.putInt("currentTime", currentTime);
 	}
 	
 	/**
@@ -100,8 +112,11 @@ public class TimeKeeper {
 		lengthTillLongBreakTracker = amountOfCyclesTillLongBreak;
 	}
 	
-	public void playAndPause(Button btnPlayAndPause){
-		this.btnPlayAndPause = btnPlayAndPause;
+	/**
+	 * This method will handle the button presses, and will run the appropriate thread for the timer
+	 * @param btnPlayAndPause
+	 */
+	public void playAndPause(){
 		if(playing == false){
 			if(breakOrWork == 1){
 				if(lengthTillLongBreakTracker > 0){
@@ -137,8 +152,12 @@ public class TimeKeeper {
 								toolkit.beep();
 								longBreakTimeLine.stop();
 								if(contiousMode.equals("Yes")){
-									playAndPause(btnPlayAndPause);
+									playAndPause();
 								}else{
+									spinnerProjects.setDisable(false);
+									hboxBottom.setStyle("-fx-background-color: #FFFF00");
+									hboxCenter.setStyle("-fx-background-color: #FFFF00");
+									hboxTop.setStyle("-fx-background-color: #FFFF00");
 									btnPlayAndPause.setText("Pause");
 								}
 							}
@@ -182,8 +201,12 @@ public class TimeKeeper {
 			            		System.out.println("Done");
 			            		shortBreakTimeLine.stop();
 								if(contiousMode.equals("Yes")){
-									playAndPause(btnPlayAndPause);
+									playAndPause();
 								}else{
+									spinnerProjects.setDisable(false);
+									hboxBottom.setStyle("-fx-background-color: #FFFF00");
+									hboxCenter.setStyle("-fx-background-color: #FFFF00");
+									hboxTop.setStyle("-fx-background-color: #FFFF00");
 									btnPlayAndPause.setText("Pause");
 								}
 			            	}
@@ -225,8 +248,12 @@ public class TimeKeeper {
 		            		System.out.println("Done");
 		            		workTimeLIne.stop();
 							if(contiousMode.equals("Yes")){
-								playAndPause(btnPlayAndPause);
+								playAndPause();
 							}else{
+								spinnerProjects.setDisable(false);
+								hboxBottom.setStyle("-fx-background-color: #FFFF00");
+								hboxCenter.setStyle("-fx-background-color: #FFFF00");
+								hboxTop.setStyle("-fx-background-color: #FFFF00");
 								btnPlayAndPause.setText("Pause");
 							}
 		            	}
@@ -268,7 +295,7 @@ public class TimeKeeper {
 			playing = false;
 			breakOrWork *= -1;
 			paused = false;
-			playAndPause(btnPlayAndPause);
+			playAndPause();
 		}else{
 			System.out.println("Press Play First");
 		}
@@ -281,29 +308,62 @@ public class TimeKeeper {
 		if(playing == true || paused == true){
 			if(whichTimerIsPlaying == 1){
 				currentTime = (currentTime - (longBreak - timerTimeTracker));
-				System.out.println("CurrentTime: " + currentTime);
-				System.out.println("longBreak: " + longBreak + " TimerTimeTracker: " + timerTimeTracker);
-				System.out.println("Subtracted: " + (longBreak - timerTimeTracker));
 				longBreakTimeLine.stop();
 			}else if(whichTimerIsPlaying == 2){
 				currentTime = (currentTime - (shortBreak - timerTimeTracker));
-				System.out.println("CurrentTime: " + currentTime);
-				System.out.println("shortBreak: " + shortBreak + " TimerTimeTracker: " + timerTimeTracker);
-				System.out.println("Subtracted: " + (shortBreak - timerTimeTracker));
 				shortBreakTimeLine.stop();
 			}else{
 				currentTime = (currentTime - (workTime - timerTimeTracker));
-				System.out.println("CurrentTime: " + currentTime);
-				System.out.println("workTime: " + workTime + " TimerTimeTracker: " + timerTimeTracker);
-				System.out.println("Subtracted: " + (workTime - timerTimeTracker));
 				workTimeLIne.stop();
 			}
 			playing = false;
 			paused = false;
-			playAndPause(btnPlayAndPause);
+			playAndPause();
 		}else{
 			System.out.println("Press Play First");
 		}
+	}
+	
+	public void save(){
+		pref.putInt(project, (pref.getInt(project, 0) + currentTime));
+	}
+	
+	/**
+	 * This method will only run if the projects are changed
+	 * @param newVAlue
+	 * @return
+	 */
+	public String hardReset(String newVAlue){
+		System.out.println("Hard Reset Ran");
+		pref.put("CurrentProject", newVAlue);
+		
+		btnPlayAndPause.setText("Pause");
+		hboxBottom.setStyle("-fx-background-color: #FFFF00");
+		hboxCenter.setStyle("-fx-background-color: #FFFF00");
+		hboxTop.setStyle("-fx-background-color: #FFFF00");
+
+		
+		pref.putInt(project, (pref.getInt(project, 0) + currentTime));
+
+		System.out.println("New Value: " + newVAlue);
+		System.out.println("Current Position: " + project);
+		this.project = newVAlue;
+		
+		currentTime = 0;
+		updateValues(workTime);
+		
+		if(playing == true || paused == true){
+			if(whichTimerIsPlaying == 1){
+				longBreakTimeLine.stop();
+			}else if(whichTimerIsPlaying == 2){
+				shortBreakTimeLine.stop();
+			}else{
+				workTimeLIne.stop();
+			}
+			playing = false;
+			paused = false;
+		}
+		return newVAlue;
 	}
 	
 	/**

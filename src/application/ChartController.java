@@ -20,6 +20,8 @@ public class ChartController {
 	Label labelTwo;
 	@FXML
 	Label labelThree;
+	@FXML
+	Label labelFour;
 	
 	public void goBackToMainMenu(ActionEvent e){
 		Parent loader = null;
@@ -40,6 +42,19 @@ public class ChartController {
 	
 	public void initialize(){
 		Preferences pref = Preferences.userRoot();
-		labelOne.setText("Total time: " + (pref.getInt("currentTime", 0)/60));
+		if(pref.getBoolean("Used", false) == true){
+			System.out.println("TEST ONE RAN:");
+			pref.putInt(pref.get("CurrentProject", "All Pomorodo"), (pref.getInt(pref.get("CurrentProject", "All Pomorodo"), 0) + pref.getInt("currentTime", 0)));
+			pref.putBoolean("Used", false);
+		}
+		labelOne.setText("OverAllTime time: " + (pref.getInt("currentTime", 0)/60));
+		labelTwo.setText("Programming time: " + (pref.getInt("Programming", 0)/60));
+		labelThree.setText("Homework time: " + (pref.getInt("Homework", 0)/60));
+		labelFour.setText("Workout time: " + (pref.getInt("Workout", 0)/60));
+		if(pref.getBoolean("Used", false) == false){
+			System.out.println("TEST TWO RAN");
+			pref.putInt(pref.get("CurrentProject", "All Pomorodo"), (pref.getInt(pref.get("CurrentProject", "All Pomorodo"), 0) - pref.getInt("currentTime", 0)));
+			pref.putBoolean("Used", true);
+		}
 	}
 }
