@@ -158,7 +158,7 @@ public class TimeKeeper {
 									hboxBottom.setStyle("-fx-background-color: #FFFF00");
 									hboxCenter.setStyle("-fx-background-color: #FFFF00");
 									hboxTop.setStyle("-fx-background-color: #FFFF00");
-									btnPlayAndPause.setText("Pause");
+									btnPlayAndPause.setText("Play");
 								}
 							}
 							
@@ -207,7 +207,7 @@ public class TimeKeeper {
 									hboxBottom.setStyle("-fx-background-color: #FFFF00");
 									hboxCenter.setStyle("-fx-background-color: #FFFF00");
 									hboxTop.setStyle("-fx-background-color: #FFFF00");
-									btnPlayAndPause.setText("Pause");
+									btnPlayAndPause.setText("Play");
 								}
 			            	}
 						}
@@ -254,7 +254,7 @@ public class TimeKeeper {
 								hboxBottom.setStyle("-fx-background-color: #FFFF00");
 								hboxCenter.setStyle("-fx-background-color: #FFFF00");
 								hboxTop.setStyle("-fx-background-color: #FFFF00");
-								btnPlayAndPause.setText("Pause");
+								btnPlayAndPause.setText("Play");
 							}
 		            	}
 					}
@@ -325,6 +325,7 @@ public class TimeKeeper {
 	}
 	
 	public void save(){
+							System.out.println("PUTTING IN CURRENT TIME LINE FOUR: " + ((pref.getInt(project, 0) + currentTime)/60));
 		pref.putInt(project, (pref.getInt(project, 0) + currentTime));
 	}
 	
@@ -334,15 +335,15 @@ public class TimeKeeper {
 	 * @return
 	 */
 	public String hardReset(String newVAlue){
-		System.out.println("Hard Reset Ran");
+		pref.putBoolean("Used", false);
 		pref.put("CurrentProject", newVAlue);
 		
-		btnPlayAndPause.setText("Pause");
+		btnPlayAndPause.setText("Play");
 		hboxBottom.setStyle("-fx-background-color: #FFFF00");
 		hboxCenter.setStyle("-fx-background-color: #FFFF00");
 		hboxTop.setStyle("-fx-background-color: #FFFF00");
 
-		
+								System.out.println("PUTTING IN CURRENT TIME LINE THREE" + ((pref.getInt(project, 0) + currentTime)/60));
 		pref.putInt(project, (pref.getInt(project, 0) + currentTime));
 
 		System.out.println("New Value: " + newVAlue);

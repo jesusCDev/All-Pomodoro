@@ -48,5 +48,6 @@ public class Main extends Application {
 		pref.put("CurrentProject", "All Pomorodo");
 		pref.putInt("totalMinsWorked", currentTime);
 		pref.putInt("currentTime", 0);
+		pref.putInt("resumeWhichTimerIsPlaying", 3);
 	}
 }

@@ -95,7 +95,7 @@ public class StartPomorodoController {
 
 		timer = new TimeKeeper(lbTimer, pref.get("continousMode", "Yes"), hboxTop, hboxCenter, hboxBottom, spinnerProjects, btnPlayAndPause);
 		
-		String[] projectsList = pref.get("projects", "All Pomorodo,wordTwo,wordThree,wordFour,wordFive,wordSix").split(",");
+		String[] projectsList = pref.get("projects", "All Pomorodo").split(",");
 		ObservableList<String> projects = FXCollections.observableArrayList(projectsList);
 		SpinnerValueFactory<String> valueFactory = new SpinnerValueFactory.ListSpinnerValueFactory<String>(projects);
 		valueFactory.setValue(pref.get("CurrentProject", "All Pomorodo"));
@@ -108,13 +108,21 @@ public class StartPomorodoController {
 	    
 	    );   
 	    
+	    System.out.println("Resume Time: " + pref.getInt("resumeTime", 0));
 		int seconds;
 		if(pref.getInt("resumeTime", 0) != 0){
 			seconds = (pref.getInt("resumeTime", 0));
 			timer.resume();
 			pref.putInt("resumeTime", 0);
 		}else{
-			seconds = (pref.getInt("workTimeDuration", 25) * 60);
+			int workBreak = pref.getInt("resumeWhichTimerIsPlaying", 0);
+			if(workBreak == 1){
+				seconds = (pref.getInt("shortBreakDuration", 25) * 60);
+			}else if(workBreak == 2){
+				seconds = (pref.getInt("longBreakDuration", 25) * 60);
+			}else{
+				seconds = (pref.getInt("workTimeDuration", 25) * 60);
+			}
 		}
 		
 		//displayTime
@@ -141,24 +149,25 @@ public class StartPomorodoController {
 	public void playPauseBtn(ActionEvent e){
 		toolKit.beep();
 		SetWindowSize();
-		System.out.println("Play/Pause");
-		if(playPauseTracker == 1 || btnPlayAndPause.getText().equals("Pause")){
+		if(playPauseTracker == 1 || btnPlayAndPause.getText().equals("Play")){
+			System.out.println("Play");
 			spinnerProjects.setDisable(true);
 			hboxBottom.setStyle("-fx-background-color: #00E676");
 			hboxCenter.setStyle("-fx-background-color: #00E676");
 			hboxTop.setStyle("-fx-background-color: #00E676");
 			
 			timer.playAndPause();
-			btnPlayAndPause.setText("Play");
+			btnPlayAndPause.setText("Pause");
 			playPauseTracker *= -1;
 		}else{
+			System.out.println("Pause");
 			spinnerProjects.setDisable(false);
 			hboxBottom.setStyle("-fx-background-color: #FFFF00");
 			hboxCenter.setStyle("-fx-background-color: #FFFF00");
 			hboxTop.setStyle("-fx-background-color: #FFFF00");
 			
 			timer.playAndPause();
-			btnPlayAndPause.setText("Pause");
+			btnPlayAndPause.setText("Play");
 			playPauseTracker *= -1;
 		}
 	}
