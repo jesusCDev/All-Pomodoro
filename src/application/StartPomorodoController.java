@@ -106,23 +106,29 @@ public class StartPomorodoController {
 	    
 	    project = timer.hardReset(newValue.toString())
 	    
-	    );   
+	    );
 	    
-	    System.out.println("Resume Time: " + pref.getInt("resumeTime", 0));
-		int seconds;
-		if(pref.getInt("resumeTime", 0) != 0){
+	    
+		int seconds = (pref.getInt("workTimeDuration", 25) * 60);
+		if(pref.getBoolean("resumeTimeBoolean", false) == true){
+			System.out.println("Resumed");
 			seconds = (pref.getInt("resumeTime", 0));
-			timer.resume();
-			pref.putInt("resumeTime", 0);
-		}else{
 			int workBreak = pref.getInt("resumeWhichTimerIsPlaying", 0);
-			if(workBreak == 1){
-				seconds = (pref.getInt("shortBreakDuration", 25) * 60);
-			}else if(workBreak == 2){
-				seconds = (pref.getInt("longBreakDuration", 25) * 60);
-			}else{
-				seconds = (pref.getInt("workTimeDuration", 25) * 60);
+			if(pref.getInt("resumeTime", 0) == 0){
+				if(workBreak == 1){
+					seconds = (pref.getInt("shortBreakDuration", 25) * 60);
+				}else if(workBreak == 2){
+					seconds = (pref.getInt("longBreakDuration", 25) * 60);
+				}else{
+					seconds = (pref.getInt("workTimeDuration", 25) * 60);
+				}
 			}
+			if(pref.getInt("resumeTime", 0) == 0){
+				timer.resume(seconds, workBreak);
+			}else{
+				timer.resume();
+			}
+			pref.putInt("resumeTime", 0);
 		}
 		
 		//displayTime

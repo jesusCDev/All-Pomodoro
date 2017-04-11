@@ -326,7 +326,7 @@ public class TimeKeeper {
 	
 	public void save(){
 							System.out.println("PUTTING IN CURRENT TIME LINE FOUR: " + ((pref.getInt(project, 0) + currentTime)/60));
-		pref.putInt(project, (pref.getInt(project, 0) + currentTime));
+		//pref.putInt(project, (pref.getInt(project, 0) + currentTime));
 	}
 	
 	/**
@@ -372,8 +372,10 @@ public class TimeKeeper {
 	 * and save its current position
 	 */
 	public void stop(){
-
+		pref.putBoolean("resumeTimeBoolean", true);
+		System.out.println("RESUEMD TIME " + timerTimeTracker);
 		pref.putInt("resumeTime", timerTimeTracker);
+		System.out.println("RESUMED TIME: " + pref.getInt("resumeTime", 8));
 		pref.putInt("resumeWhichTimerIsPlaying", whichTimerIsPlaying);
 		pref.putInt("lengthTillLongBreakTracker", lengthTillLongBreakTracker);
 		pref.putInt("resumebreakOrWork", breakOrWork);
@@ -401,8 +403,20 @@ public class TimeKeeper {
 	 * and it will set all the values for them
 	 */
 	public void resume(){
+		pref.putBoolean("resumeTimeBoolean", false);
 		timerTimeTracker = pref.getInt("resumeTime", timerTimeTracker);
 		whichTimerIsPlaying = pref.getInt("resumeWhichTimerIsPlaying", whichTimerIsPlaying);
+		lengthTillLongBreakTracker = pref.getInt("lengthTillLongBreakTracker", lengthTillLongBreakTracker);
+		breakOrWork = pref.getInt("resumebreakOrWork", breakOrWork);
+		currentTime = pref.getInt("resumecurrentTime", currentTime);
+	}
+	
+	public void resume(int seconds, int workBreak){
+		System.out.println("Seconds: " + seconds);
+		System.out.println("WorkBreak: " + workBreak);
+		pref.putBoolean("resumeTimeBoolean", false);
+		timerTimeTracker = seconds;
+		whichTimerIsPlaying = workBreak;
 		lengthTillLongBreakTracker = pref.getInt("lengthTillLongBreakTracker", lengthTillLongBreakTracker);
 		breakOrWork = pref.getInt("resumebreakOrWork", breakOrWork);
 		currentTime = pref.getInt("resumecurrentTime", currentTime);
