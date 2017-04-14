@@ -48,12 +48,28 @@ public class Main extends Application {
 		Calendar cal = Calendar.getInstance();
 		
 		int currentTime = pref.getInt("currentTime", 0);
-		pref.putInt(pref.get("CurrentProject", "All Pomorodo"), (pref.getInt(pref.get("CurrentProject", "All Pomorodo"), 0) + currentTime));
-		pref.putInt((pref.get("CurrentProject", "All Pomorodo") + " Total"), (pref.getInt(pref.get("CurrentProject", "All Pomorodo"), 0) + currentTime));
-		pref.putInt((pref.get("CurrentProject", "All Pomorodo") + " " + cal.get(Calendar.DAY_OF_WEEK)), (pref.getInt(pref.get("CurrentProject", "All Pomorodo"), 0) + currentTime));
-		pref.put("CurrentProject", "All Pomorodo");
+		
+		String currentProjectPrefString = "CurrentProject";
+		String allPomorodoPrefString = "All Pomorodo";
+		String currentTimePrefString = "currentTime";
+		
+		String totalKeyWord = " Total";
+		String spaceKeyWord = " ";
+		
+		//This saves it for today
+		pref.putInt(pref.get(currentProjectPrefString, allPomorodoPrefString), (pref.getInt(pref.get(currentProjectPrefString, allPomorodoPrefString), 0) + currentTime));
+		//This saves it for the day of the week
+		pref.putInt((pref.get(currentProjectPrefString, allPomorodoPrefString) + spaceKeyWord + cal.get(Calendar.DAY_OF_WEEK)), (pref.getInt(pref.get(currentProjectPrefString, allPomorodoPrefString), 0) + currentTime));
+		//This saves it for the overall time
+		pref.putInt((pref.get(currentProjectPrefString, allPomorodoPrefString) + totalKeyWord), (pref.getInt(pref.get(currentProjectPrefString, allPomorodoPrefString), 0) + currentTime));
+		
+		//Changes the Current Project to All Pomorodo
+		pref.put(currentProjectPrefString, allPomorodoPrefString);
+		pref.putInt(currentTimePrefString, 0);
+		
+		//TODO This might be deleted
 		pref.putInt("totalMinsWorked", currentTime);
-		pref.putInt("currentTime", 0);
+		//TODO this will might be deleted
 		pref.putInt("resumeWhichTimerIsPlaying", 3);
 	}
 }

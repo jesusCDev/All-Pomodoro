@@ -46,7 +46,8 @@ public class StartPomorodoController {
 	TimeKeeper timer;
 	Toolkit toolKit;
 	
-	String project = "All Pomorodo";
+	//TODO MAYBE DELETE THIS TOO, DOESN'T SEEM TO DO ANYTHING
+	String currentProject = "All Pomorodo";
 	/**
 	 * This button action will let you see your settings and lets you affect them
 	 * you can change period amounts
@@ -89,124 +90,137 @@ public class StartPomorodoController {
 	}
 	
 	/**
-	 * This will set the values for the timer and will set the right time for the timer
+	 * set values of timer
+	 * saves values and resets if things change
 	 */
 	public void initialize(){
 		Preferences pref = Preferences.userRoot();
 		Calendar cal = Calendar.getInstance();
 
-		String today = cal.get(Calendar.MONTH) + " " + cal.get(Calendar.DAY_OF_MONTH);
-		String firstTimeUsing = "FirstTimeUsing";
-		String todaysDate = "todaysDate";
-		String lastTimeUsedDayOfYear = "lastTimeUsedDayOfYear";
-		String lastTimeUsedDayOfWeek = "lastTimeUsedDayOfWeek";
-		String lastTimeUsedWeekOfYear = "lastTimeUsedWeekOfYear";
-		String lastTimeUsedYear = "lastTimeUsedYear";
+		//Preference names
+		String continouseModePrefString = "continousMode";
+		String longBreakDurationPrefString = "longBreakDuration";
+		String shortBreakDurationPrefString = "shortBreakDuration";
+		String workTimeDurationPrefString = "workTimeDuration";
+		String projectsPrefString = "projects";
+		String allPomorodoPrefString = "All Pomorodo";
+		
+		String firstTimeUsingPrefString = "FirstTimeUsing";
+		String todaysDatePrefString = "todaysDate";
+		
+		String lastTimeUsedDayOfYearPrefString = "lastTimeUsedDayOfYear";
+		String lastTimeUsedDayOfWeekPrefString = "lastTimeUsedDayOfWeek";
+		String lastTimeUsedWeekOfYearPrefString = "lastTimeUsedWeekOfYear";
+		String lastTimeUsedYearPrefString = "lastTimeUsedYear";
+
+	    String resumeTimeBooleanPrefString = "resumeTimeBoolean";
+	    String resumeTimePrefString = "resumeTime";
+	    String resumeWhichTimerIsPlayingPrefString = "resumeWhichTimerIsPlaying";
+		//Common Keywords
+		String yesKeyWord = "Yes";
+		String commaKeyWord = ",";
+		String spaceKeyWord = " ";
+		
+		
+		String today = cal.get(Calendar.MONTH) + spaceKeyWord + cal.get(Calendar.DAY_OF_MONTH);
 				
+		String[] projectsList = pref.get(projectsPrefString, allPomorodoPrefString).split(commaKeyWord);
+		
 		//this will only run the first time you run the program
-		if(pref.getBoolean(firstTimeUsing, true) == true){
-			pref.putBoolean(firstTimeUsing, false);
-			pref.put(todaysDate, today);
-			pref.putInt(lastTimeUsedDayOfWeek, cal.get(Calendar.DAY_OF_WEEK));
-			pref.putInt(lastTimeUsedWeekOfYear, cal.get(Calendar.WEEK_OF_YEAR));
-			pref.putInt(lastTimeUsedDayOfYear, cal.get(Calendar.DAY_OF_YEAR));
-			pref.putInt(lastTimeUsedYear, cal.get(Calendar.YEAR));
+		if(pref.getBoolean(firstTimeUsingPrefString, true) == true){
+			pref.putBoolean(firstTimeUsingPrefString, false);
+			pref.put(todaysDatePrefString, today);
+			pref.putInt(lastTimeUsedDayOfWeekPrefString, cal.get(Calendar.DAY_OF_WEEK));
+			pref.putInt(lastTimeUsedWeekOfYearPrefString, cal.get(Calendar.WEEK_OF_YEAR));
+			pref.putInt(lastTimeUsedDayOfYearPrefString, cal.get(Calendar.DAY_OF_YEAR));
+			pref.putInt(lastTimeUsedYearPrefString, cal.get(Calendar.YEAR));
 		}
 		
-		//will resety the information when you first start the app on a different dzy
-		if(!today.equals(pref.get(todaysDate, "Nope"))){
+		//will reset the information when you first start the application on a different day
+		if(!today.equals(pref.get(todaysDatePrefString, "Nope"))){
 			
-			String[] projectsList = pref.get("projects", "All Pomorodo").split(",");
-			
-			//TODO DO WE NEED TO SAVE THIS CONSIDERING WE ALREADY SAVED THAT OTHER TIME
-			//this saves the values before we delete them
-			for(int i = 0; i < projectsList.length; i++){
-				pref.putInt((projectsList[i] + " Total"), pref.getInt(projectsList[i], 0));
-				pref.putInt((projectsList[i] + " " + pref.getInt(lastTimeUsedDayOfWeek, 0)), pref.getInt(projectsList[i], 0));	
-			}
 
 		//WILL CHECK IF YOU MISSED A DAY AND SET THE VALUES TO ZERO FOR THE DAYS MISSED IN THE WEEK
-			if(((cal.get(Calendar.DAY_OF_YEAR) - pref.getInt(lastTimeUsedDayOfYear, 0)) < 7) && (cal.get(Calendar.YEAR) == pref.getInt(lastTimeUsedYear, 0))){
+			if(((cal.get(Calendar.DAY_OF_YEAR) - pref.getInt(lastTimeUsedDayOfYearPrefString, 0)) < 7) && (cal.get(Calendar.YEAR) == pref.getInt(lastTimeUsedYearPrefString, 0))){
 				for(int j = 0; j < projectsList.length; j++){
-					for(int i = ((cal.get(Calendar.DAY_OF_YEAR) - pref.getInt(lastTimeUsedDayOfYear, 0)) - 1); i > 0; i--){
-						pref.putInt((projectsList[j] + " " + (Calendar.DAY_OF_WEEK - i)), 0);
+					for(int i = ((cal.get(Calendar.DAY_OF_YEAR) - pref.getInt(lastTimeUsedDayOfYearPrefString, 0)) - 1); i > 0; i--){
+						pref.putInt((projectsList[j] + spaceKeyWord + (Calendar.DAY_OF_WEEK - i)), 0);
 					}
 				}
 			}
-			if(cal.get(Calendar.YEAR) != pref.getInt(lastTimeUsedYear, 0)){
+			if(cal.get(Calendar.YEAR) != pref.getInt(lastTimeUsedYearPrefString, 0)){
 				if((365 - cal.get(Calendar.YEAR)) < 7){
 					for(int j = 0; j < projectsList.length; j++){
-						for(int i = ((cal.get(Calendar.DAY_OF_WEEK) - pref.getInt(lastTimeUsedDayOfWeek, 0)) - 1); i > 0; i--){
-							pref.putInt((projectsList[j] + " " + (Calendar.DAY_OF_WEEK - i)), 0);
+						for(int i = ((cal.get(Calendar.DAY_OF_WEEK) - pref.getInt(lastTimeUsedDayOfWeekPrefString, 0)) - 1); i > 0; i--){
+							pref.putInt((projectsList[j] + spaceKeyWord + (Calendar.DAY_OF_WEEK - i)), 0);
 						}
 					}
 				}
 			}
 		//WILL CHECK IF YOU MISSED A DAY AND SET THE VALUES TO ZERO FOR THE DAYS MISSED IN THE WEEK
-			
-		//section will focus on reseting the values incase you are in a new week
-			if((cal.get(Calendar.WEEK_OF_YEAR) != pref.getInt(lastTimeUsedWeekOfYear, 0)) && (cal.get(Calendar.DAY_OF_YEAR) > 6)){
+
+		//SECTION WILL FOCUS ON RESTING THE VALUES INCASE YOU ARE IN A NEW WEEK
+			if((cal.get(Calendar.WEEK_OF_YEAR) != pref.getInt(lastTimeUsedWeekOfYearPrefString, 0)) && (cal.get(Calendar.DAY_OF_YEAR) > 6)){
 				for(int j = 0; j < projectsList.length; j++){
 					for(int i = 0; i < 7; i++){
-						pref.putInt((projectsList[j] + " " + i), 0);
+						pref.putInt((projectsList[j] + spaceKeyWord + i), 0);
 					}
 				}
-				pref.putInt(lastTimeUsedWeekOfYear, cal.get(Calendar.WEEK_OF_YEAR));
+				pref.putInt(lastTimeUsedWeekOfYearPrefString, cal.get(Calendar.WEEK_OF_YEAR));
 			}
-		//section will focus on reseting the values incase you are in a new week
+		//SECTION WILL FOCUS ON RESTING THE VALUES INCASE YOU ARE IN A NEW WEEK
 			
 			//Will set all the values for today to zero so a fresh start
 			for(int i = 0; i < projectsList.length; i++){
 				pref.putInt(projectsList[i], 0);
 			}
 			
-			pref.put(todaysDate, today);
-			pref.putInt(lastTimeUsedDayOfWeek, cal.get(Calendar.DAY_OF_WEEK));
-			pref.putInt(lastTimeUsedWeekOfYear, cal.get(Calendar.WEEK_OF_YEAR));
-			pref.putInt(lastTimeUsedDayOfYear, cal.get(Calendar.DAY_OF_YEAR));
-			pref.putInt(lastTimeUsedYear, cal.get(Calendar.YEAR));
+			pref.put(todaysDatePrefString, today);
+			pref.putInt(lastTimeUsedDayOfWeekPrefString, cal.get(Calendar.DAY_OF_WEEK));
+			pref.putInt(lastTimeUsedWeekOfYearPrefString, cal.get(Calendar.WEEK_OF_YEAR));
+			pref.putInt(lastTimeUsedDayOfYearPrefString, cal.get(Calendar.DAY_OF_YEAR));
+			pref.putInt(lastTimeUsedYearPrefString, cal.get(Calendar.YEAR));
 		}
 		
 		toolKit = Toolkit.getDefaultToolkit();
-		timer = new TimeKeeper(lbTimer, pref.get("continousMode", "Yes"), hboxTop, hboxCenter, hboxBottom, spinnerProjects, btnPlayAndPause);
+		timer = new TimeKeeper(lbTimer, pref.get(continouseModePrefString, yesKeyWord), hboxTop, hboxCenter, hboxBottom, spinnerProjects, btnPlayAndPause);
 		
 		//this will handle the spinner
-		String[] projectsList = pref.get("projects", "All Pomorodo").split(",");
 		ObservableList<String> projects = FXCollections.observableArrayList(projectsList);
 		SpinnerValueFactory<String> valueFactory = new SpinnerValueFactory.ListSpinnerValueFactory<String>(projects);
-		valueFactory.setValue(pref.get("CurrentProject", "All Pomorodo"));
+		valueFactory.setValue(pref.get("CurrentProject", allPomorodoPrefString));
 		spinnerProjects.setValueFactory(valueFactory);
 	    spinnerProjects.getStyleClass().add(spinnerProjects.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
 		
 	    spinnerProjects.valueProperty().addListener((obs, oldValue, newValue) -> 
 	    
-	    project = timer.hardReset(newValue.toString())
+	    currentProject = timer.hardReset(newValue.toString())
 	    
 	    );
 	    
 	    //this will take care of the timer and set the time for which it is when resumed
-		int seconds = (pref.getInt("workTimeDuration", 25) * 60);
-		if(pref.getBoolean("resumeTimeBoolean", false) == true){
-			seconds = (pref.getInt("resumeTime", 0));
-			int workBreak = pref.getInt("resumeWhichTimerIsPlaying", 0);
-			if(pref.getInt("resumeTime", 0) == 0){ 
+		int seconds = (pref.getInt(workTimeDurationPrefString, 25) * 60);
+		if(pref.getBoolean(resumeTimeBooleanPrefString, false) == true){
+			seconds = (pref.getInt(resumeTimePrefString, 0));
+			int workBreak = pref.getInt(resumeWhichTimerIsPlayingPrefString, 0);
+			if(pref.getInt(resumeTimePrefString, 0) == 0){ 
 				if(workBreak == 1){
-					seconds = (pref.getInt("shortBreakDuration", 25) * 60);
+					seconds = (pref.getInt(shortBreakDurationPrefString, 25) * 60);
 				}else if(workBreak == 2){
-					seconds = (pref.getInt("longBreakDuration", 25) * 60);
+					seconds = (pref.getInt(longBreakDurationPrefString, 25) * 60);
 				}else{
-					seconds = (pref.getInt("workTimeDuration", 25) * 60);
+					seconds = (pref.getInt(workTimeDurationPrefString, 25) * 60);
 				}
 			}
-			if(pref.getInt("resumeTime", 0) == 0){
+			if(pref.getInt(resumeTimePrefString, 0) == 0){
 				timer.resume(seconds, workBreak);
 			}else{
 				timer.resume();
 			}
-			pref.putInt("resumeTime", 0);
+			pref.putInt(resumeTimePrefString, 0);
 		}
 		
-		//this puts the time in the correct format
+		//Change the label for the time in the correct format
 		int minLeft = (seconds/60);
 		int secondsLeft = (seconds - (minLeft * 60));
 		if((seconds%60) == 0){
@@ -229,30 +243,32 @@ public class StartPomorodoController {
 	public void playPauseBtn(ActionEvent e){
 		toolKit.beep();
 		SetWindowSize();
+		String play = "Play";
+		String pause = "Pause";
 		
-		if(playPauseTracker == 1 || btnPlayAndPause.getText().equals("Play")){
-			System.out.println("Play");
+		if(playPauseTracker == 1 || btnPlayAndPause.getText().equals(play)){
+			System.out.println(play);
+			String playColor = "-fx-background-color: #00E676";
 			
 			spinnerProjects.setDisable(true);
-			String color = "-fx-background-color: #00E676";
-			hboxBottom.setStyle(color);
-			hboxCenter.setStyle(color);
-			hboxTop.setStyle(color);
+			hboxBottom.setStyle(playColor);
+			hboxCenter.setStyle(playColor);
+			hboxTop.setStyle(playColor);
 			
 			timer.playAndPause();
-			btnPlayAndPause.setText("Pause");
+			btnPlayAndPause.setText(pause);
 			playPauseTracker *= -1;
 		}else{
-			System.out.println("Pause");
+			System.out.println(pause);
+			String pauseColor = "-fx-background-color: #FFFF00";
 			
 			spinnerProjects.setDisable(false);
-			String color = "-fx-background-color: #FFFF00";
-			hboxBottom.setStyle(color);
-			hboxCenter.setStyle(color);
-			hboxTop.setStyle(color);
+			hboxBottom.setStyle(pauseColor);
+			hboxCenter.setStyle(pauseColor);
+			hboxTop.setStyle(pauseColor);
 			
 			timer.playAndPause();
-			btnPlayAndPause.setText("Play");
+			btnPlayAndPause.setText(play);
 			playPauseTracker *= -1;
 		}
 	}

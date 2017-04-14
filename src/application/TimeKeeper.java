@@ -63,6 +63,30 @@ public class TimeKeeper {
 	Timeline workTimeLIne;
 	
 	Preferences pref;
+	//Preference names
+	String longBreakDurationPrefString = "longBreakDuration";
+	String shortBreakDurationPrefString = "shortBreakDuration";
+	String workTimeDurationPrefString = "workTimeDuration";
+	String currentProjectPrefString = "currentProject";
+	String currentTimePrefString = "currentTime";
+	
+
+    String resumeTimeBooleanPrefString = "resumeTimeBoolean";
+    String resumeTimePrefString = "resumeTime";
+    String resumeWhichTimerIsPlayingPrefString = "resumeWhichTimerIsPlaying";
+    String lengthTillLongBreakTrackerPrefString = "lengthTillLongBreakTracker";
+	String resumebreakOrWorkPrefString = "resumebreakOrWork";
+	String resumecurrentTimePrefString = "resumecurrentTime";
+	String resumePrefString = "resume";
+	String amountOfCyclesTillLongBreakPrefString = "amountOfCyclesTillLongBreak";
+					
+	//Common Keywords
+	String yesKeyWord = "Yes";
+	String spaceKeyWord = " ";
+	String totalKeyWord = " Total";
+
+	String play = "Play";
+	String pauseColor = "-fx-background-color: #FFFF00";
 	
 	/**
 	 * This is teh constructor that lets you pass in values that we will be using
@@ -97,7 +121,7 @@ public class TimeKeeper {
 		}else{
 			lbTimer.setText(minLeft + ":" + secondsLeft);
 		}
-		pref.putInt("currentTime", currentTime);
+		pref.putInt(currentTimePrefString, currentTime);
 	}
 	
 	/**
@@ -105,10 +129,10 @@ public class TimeKeeper {
 	 */
 	public void setValues(){
 		pref = Preferences.userRoot();
-		longBreak = (pref.getInt("longBreakDuration", 10) * 60);
-		shortBreak = (pref.getInt("shortBreakDuration", 5) * 60);
-		workTime = (pref.getInt("workTimeDuration", 25) * 60);
-		amountOfCyclesTillLongBreak = pref.getInt("amountOfCyclesTillLongBreak", 3);
+		longBreak = (pref.getInt(longBreakDurationPrefString, 10) * 60);
+		shortBreak = (pref.getInt(shortBreakDurationPrefString, 5) * 60);
+		workTime = (pref.getInt(workTimeDurationPrefString, 25) * 60);
+		amountOfCyclesTillLongBreak = pref.getInt(amountOfCyclesTillLongBreakPrefString, 3);
 		timerTimeTracker = workTime;
 		lengthTillLongBreakTracker = amountOfCyclesTillLongBreak;
 	}
@@ -123,10 +147,10 @@ public class TimeKeeper {
 				if(lengthTillLongBreakTracker > 0){
 					
 					if(paused == false){
-						if(pref.getBoolean("resume", false) == false){
+						if(pref.getBoolean(resumePrefString, false) == false){
 							timerTimeTracker = shortBreak;
 						}else{
-							pref.putBoolean("resume", false);
+							pref.putBoolean(resumePrefString, false);
 						}
 					}else{
 						paused = false;
@@ -152,14 +176,14 @@ public class TimeKeeper {
 								lengthTillLongBreakTracker--;
 								toolkit.beep();
 								longBreakTimeLine.stop();
-								if(contiousMode.equals("Yes")){
+								if(contiousMode.equals(yesKeyWord)){
 									playAndPause();
 								}else{
 									spinnerProjects.setDisable(false);
-									hboxBottom.setStyle("-fx-background-color: #FFFF00");
-									hboxCenter.setStyle("-fx-background-color: #FFFF00");
-									hboxTop.setStyle("-fx-background-color: #FFFF00");
-									btnPlayAndPause.setText("Play");
+									hboxBottom.setStyle(pauseColor);
+									hboxCenter.setStyle(pauseColor);
+									hboxTop.setStyle(pauseColor);
+									btnPlayAndPause.setText(play);
 								}
 							}
 							
@@ -171,10 +195,10 @@ public class TimeKeeper {
 					
 					if(paused == false){
 
-						if(pref.getBoolean("resume", false) == false){
+						if(pref.getBoolean(resumePrefString, false) == false){
 							timerTimeTracker = longBreak;
 						}else{
-							pref.putBoolean("resume", false);
+							pref.putBoolean(resumePrefString, false);
 						}
 					}else{
 						paused = false;
@@ -199,16 +223,15 @@ public class TimeKeeper {
 			            		playing = false;
 			            		breakOrWork *= -1;
 			            		toolkit.beep();
-			            		System.out.println("Done");
 			            		shortBreakTimeLine.stop();
-								if(contiousMode.equals("Yes")){
+								if(contiousMode.equals(yesKeyWord)){
 									playAndPause();
 								}else{
 									spinnerProjects.setDisable(false);
-									hboxBottom.setStyle("-fx-background-color: #FFFF00");
-									hboxCenter.setStyle("-fx-background-color: #FFFF00");
-									hboxTop.setStyle("-fx-background-color: #FFFF00");
-									btnPlayAndPause.setText("Play");
+									hboxBottom.setStyle(pauseColor);
+									hboxCenter.setStyle(pauseColor);
+									hboxTop.setStyle(pauseColor);
+									btnPlayAndPause.setText(play);
 								}
 			            	}
 						}
@@ -220,10 +243,10 @@ public class TimeKeeper {
 				
 				if(paused == false){
 
-					if(pref.getBoolean("resume", false) == false){
+					if(pref.getBoolean(resumePrefString, false) == false){
 						timerTimeTracker = workTime;
 					}else{
-						pref.putBoolean("resume", false);
+						pref.putBoolean(resumePrefString, false);
 					}
 				}else{
 					paused = true;
@@ -246,16 +269,15 @@ public class TimeKeeper {
 		            		playing = false;
 		            		breakOrWork *= -1;
 		            		toolkit.beep();
-		            		System.out.println("Done");
 		            		workTimeLIne.stop();
-							if(contiousMode.equals("Yes")){
+							if(contiousMode.equals(yesKeyWord)){
 								playAndPause();
 							}else{
 								spinnerProjects.setDisable(false);
-								hboxBottom.setStyle("-fx-background-color: #FFFF00");
-								hboxCenter.setStyle("-fx-background-color: #FFFF00");
-								hboxTop.setStyle("-fx-background-color: #FFFF00");
-								btnPlayAndPause.setText("Play");
+								hboxBottom.setStyle(pauseColor);
+								hboxCenter.setStyle(pauseColor);
+								hboxTop.setStyle(pauseColor);
+								btnPlayAndPause.setText(play);
 							}
 		            	}
 					}
@@ -336,17 +358,17 @@ public class TimeKeeper {
 	 */
 	public String hardReset(String newVAlue){
 		Date date = new Date();
-		pref.putBoolean("Used", false);
-		pref.put("CurrentProject", newVAlue);
+		pref.put(currentProjectPrefString, newVAlue);
 		
-		btnPlayAndPause.setText("Play");
-		hboxBottom.setStyle("-fx-background-color: #FFFF00");
-		hboxCenter.setStyle("-fx-background-color: #FFFF00");
-		hboxTop.setStyle("-fx-background-color: #FFFF00");
+		btnPlayAndPause.setText(play);
+		hboxBottom.setStyle(pauseColor);
+		hboxCenter.setStyle(pauseColor);
+		hboxTop.setStyle(pauseColor);
 
 		pref.putInt(project, (pref.getInt(project, 0) + currentTime));
-		pref.putInt((project + " Total"), (pref.getInt(project, 0) + currentTime));
-		pref.putInt((project + " " + date.getDay()), (pref.getInt(project, 0) + currentTime));
+		pref.putInt((project + totalKeyWord), (pref.getInt(project, 0) + currentTime));
+		//TODO CHANGE THIS TO CALENDAR
+		pref.putInt((project + spaceKeyWord + date.getDay()), (pref.getInt(project, 0) + currentTime));
 
 		this.project = newVAlue;
 		
@@ -372,13 +394,13 @@ public class TimeKeeper {
 	 * and save its current position
 	 */
 	public void stop(){
-		pref.putBoolean("resumeTimeBoolean", true);
-		pref.putInt("resumeTime", timerTimeTracker);
-		pref.putInt("resumeWhichTimerIsPlaying", whichTimerIsPlaying);
-		pref.putInt("lengthTillLongBreakTracker", lengthTillLongBreakTracker);
-		pref.putInt("resumebreakOrWork", breakOrWork);
-		pref.putInt("resumecurrentTime", currentTime);
-		pref.putBoolean("resume", true);
+		pref.putBoolean(resumeTimeBooleanPrefString, true);
+		pref.putInt(resumeTimePrefString, timerTimeTracker);
+		pref.putInt(resumeWhichTimerIsPlayingPrefString, whichTimerIsPlaying);
+		pref.putInt(lengthTillLongBreakTrackerPrefString, lengthTillLongBreakTracker);
+		pref.putInt(resumebreakOrWorkPrefString, breakOrWork);
+		pref.putInt(resumecurrentTimePrefString, currentTime);
+		pref.putBoolean(resumePrefString, true);
 		
 		if(playing == true || paused == true){
 			if(whichTimerIsPlaying == 1){
@@ -401,12 +423,12 @@ public class TimeKeeper {
 	 * and it will set all the values for them
 	 */
 	public void resume(){
-		pref.putBoolean("resumeTimeBoolean", false);
-		timerTimeTracker = pref.getInt("resumeTime", timerTimeTracker);
-		whichTimerIsPlaying = pref.getInt("resumeWhichTimerIsPlaying", whichTimerIsPlaying);
-		lengthTillLongBreakTracker = pref.getInt("lengthTillLongBreakTracker", lengthTillLongBreakTracker);
-		breakOrWork = pref.getInt("resumebreakOrWork", breakOrWork);
-		currentTime = pref.getInt("resumecurrentTime", currentTime);
+		pref.putBoolean(resumeTimeBooleanPrefString, false);
+		timerTimeTracker = pref.getInt(resumeTimePrefString, timerTimeTracker);
+		whichTimerIsPlaying = pref.getInt(resumeWhichTimerIsPlayingPrefString, whichTimerIsPlaying);
+		lengthTillLongBreakTracker = pref.getInt(lengthTillLongBreakTrackerPrefString, lengthTillLongBreakTracker);
+		breakOrWork = pref.getInt(resumebreakOrWorkPrefString, breakOrWork);
+		currentTime = pref.getInt(resumecurrentTimePrefString, currentTime);
 	}
 	
 	/**
@@ -415,11 +437,11 @@ public class TimeKeeper {
 	 * @param workBreak
 	 */
 	public void resume(int seconds, int workBreak){
-		pref.putBoolean("resumeTimeBoolean", false);
+		pref.putBoolean(resumeTimeBooleanPrefString, false);
 		timerTimeTracker = seconds;
 		whichTimerIsPlaying = workBreak;
-		lengthTillLongBreakTracker = pref.getInt("lengthTillLongBreakTracker", lengthTillLongBreakTracker);
-		breakOrWork = pref.getInt("resumebreakOrWork", breakOrWork);
-		currentTime = pref.getInt("resumecurrentTime", currentTime);
+		lengthTillLongBreakTracker = pref.getInt(lengthTillLongBreakTrackerPrefString, lengthTillLongBreakTracker);
+		breakOrWork = pref.getInt(resumebreakOrWorkPrefString, breakOrWork);
+		currentTime = pref.getInt(resumecurrentTimePrefString, currentTime);
 	}
 }

@@ -55,29 +55,41 @@ public class ChartController {
 	}
 	
 	public void initialize(){
+		
+		//Preference names
+		String projectsPrefString = "projects";
+		String allPomorodoPrefString = "All Pomorodo";
+		String currentProjectPrefString = "currentProject";
+						
+		String overAllTimePrefString = "Overall Time: ";
+		String currentTimePrefString = "currentTime";
+		String programmingPrefString = "Programming";
+		String homeworkPrefString = "Homework";
+		String workoutPrefString = "Workout";
+				
+				
 		Preferences pref = Preferences.userRoot();
-		System.out.println("Overall Time: " + (((pref.getInt("currentTime", 0)) + (pref.getInt("All Pomorodo", 0)) + (pref.getInt("Programming", 0)) + (pref.getInt("Homework", 0)) + (pref.getInt("Workout", 0)))/60));
-		labelOne.setText("OverAllTime time: " + (((pref.getInt("currentTime", 0)) + (pref.getInt("All Pomorodo", 0)) + (pref.getInt("Programming", 0)) + (pref.getInt("Homework", 0)) + (pref.getInt("Workout", 0)))/60));
+		labelOne.setText(overAllTimePrefString + (((pref.getInt(currentTimePrefString, 0)) + (pref.getInt(allPomorodoPrefString, 0)) + (pref.getInt(programmingPrefString, 0)) + (pref.getInt(homeworkPrefString, 0)) + (pref.getInt(workoutPrefString, 0)))/60));
 		
-		labelTwo.setText("Programming time: " + ((pref.getInt("Programming", 0))/60));
-		labelThree.setText("Homework time: " + ((pref.getInt("Homework", 0))/60));
-		labelFour.setText("Workout time: " + ((pref.getInt("Workout", 0))/60));
+		labelTwo.setText("Programming time: " + ((pref.getInt(programmingPrefString, 0))/60));
+		labelThree.setText("Homework time: " + ((pref.getInt(homeworkPrefString, 0))/60));
+		labelFour.setText("Workout time: " + ((pref.getInt(workoutPrefString, 0))/60));
 		
-		if(pref.get("CurrentProject", "All Pomorodo").equals("Programming")){
-			labelTwo.setText("Programming time: " + (((pref.getInt("Programming", 0))/60) + ((pref.getInt("currentTime", 0))/60)));			
-		}else if(pref.get("CurrentProject", "All Pomorodo").equals("Homework")){
-			labelThree.setText("Homework time: " + (((pref.getInt("Homework", 0))/60) + ((pref.getInt("currentTime", 0))/60)));			
-		}else if(pref.get("CurrentProject", "All Pomorodo").equals("Workout")){
-			labelFour.setText("Workout time: " + (((pref.getInt("Workout", 0))/60) + ((pref.getInt("currentTime", 0))/60)));			
+		if(pref.get(currentProjectPrefString, allPomorodoPrefString).equals(programmingPrefString)){
+			labelTwo.setText("Programming time: " + (((pref.getInt(programmingPrefString, 0))/60) + ((pref.getInt(currentTimePrefString, 0))/60)));			
+		}else if(pref.get(currentProjectPrefString, allPomorodoPrefString).equals(homeworkPrefString)){
+			labelThree.setText("Homework time: " + (((pref.getInt(homeworkPrefString, 0))/60) + ((pref.getInt(currentTimePrefString, 0))/60)));			
+		}else if(pref.get(currentProjectPrefString, allPomorodoPrefString).equals(workoutPrefString)){
+			labelFour.setText("Workout time: " + (((pref.getInt(workoutPrefString, 0))/60) + ((pref.getInt(currentTimePrefString, 0))/60)));			
 		}
 		
 		ArrayList<PieChart.Data> stuff = new ArrayList<>();
-		String[] projectsList = pref.get("projects", "All Pomorodo").split(",");
+		String[] projectsList = pref.get(projectsPrefString, allPomorodoPrefString).split(",");
 		
 		for(int i = 1; i < projectsList.length; i++){
 			PieChart.Data data = null;
-			if(pref.get("CurrentProject", "All Pomorodo").equals(projectsList[i])){
-				data = new PieChart.Data(projectsList[i], ((pref.getInt(projectsList[i], 0) + (pref.getInt("currentTime", 0)))/60));	
+			if(pref.get(currentProjectPrefString, allPomorodoPrefString).equals(projectsList[i])){
+				data = new PieChart.Data(projectsList[i], ((pref.getInt(projectsList[i], 0) + (pref.getInt(currentTimePrefString, 0)))/60));	
 			}else{
 				data = new PieChart.Data(projectsList[i], (pref.getInt(projectsList[i], 0)/60));				
 			}
@@ -85,7 +97,7 @@ public class ChartController {
 		}
 				
 		int today = 24 * 60;
-		int used = ((((pref.getInt("currentTime", 0)) + (pref.getInt("All Pomorodo", 0)) + (pref.getInt("Programming", 0)) + (pref.getInt("Homework", 0)) + (pref.getInt("Workout", 0)))));
+		int used = ((((pref.getInt(currentTimePrefString, 0)) + (pref.getInt(allPomorodoPrefString, 0)) + (pref.getInt(programmingPrefString, 0)) + (pref.getInt(homeworkPrefString, 0)) + (pref.getInt(workoutPrefString, 0)))));
 		int hoursNotUsing = today - used;
 		
 		PieChart.Data data = new PieChart.Data("Mintues Not In Use", hoursNotUsing);
@@ -102,7 +114,7 @@ public class ChartController {
 		//spinner
 		ObservableList<String> projects = FXCollections.observableArrayList(projectsList);
 		SpinnerValueFactory<String> valueFactory = new SpinnerValueFactory.ListSpinnerValueFactory<String>(projects);
-		valueFactory.setValue(pref.get("CurrentProject", "All Pomorodo"));
+		valueFactory.setValue(pref.get(currentProjectPrefString, allPomorodoPrefString));
 		spinnerProject2.setValueFactory(valueFactory);
 		spinnerProject2.getStyleClass().add(spinnerProject2.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
 		

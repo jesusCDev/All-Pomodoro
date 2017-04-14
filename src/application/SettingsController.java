@@ -34,16 +34,33 @@ public class SettingsController {
 	@FXML
 	TextField efAddProject;
 	
-	Preferences pref;
+	private Preferences pref;
 	
+	//Preference names
+	private String continouseModePrefString = "continousMode";
+	private String longBreakDurationPrefString = "longBreakDuration";
+	private String shortBreakDurationPrefString = "shortBreakDuration";
+	private String workTimeDurationPrefString = "workTimeDuration";
+	private String amountOfCyclesTillLongBreakPrefString = "amountOfCyclesTillLongBreak";
+	private String projectsPrefString = "projects";
+	private String allPomorodoPrefString = "All Pomorodo";
+	
+	//Common Keywords
+	private String yesKeyWord = "Yes";
+	private String noKeyWord = "No";
+	private String commaKeyWord = ",";
+	private String totalKeyWord = " Total";
+	private String spaceKeyWord = " ";
+	
+	/**
+	 * This method will use the checkbox to set continous mode on or off
+	 */
 	public void cbCheckContinousMode(){
-		System.out.println("Changed");
+		
 		if(cbContiouseMode.isSelected()){
-			System.out.println("Set");
-			pref.put("continousMode", "Yes");
+			pref.put(continouseModePrefString, yesKeyWord);
 		}else{
-			System.out.println("No");
-			pref.put("continousMode", "No");
+			pref.put(continouseModePrefString, noKeyWord);
 		}
 	}
 	
@@ -73,29 +90,33 @@ public class SettingsController {
 	 * This method will set all the values as soon as they are loaded
 	 */
 	public void initialize(){
-		pref = Preferences.userRoot();
-		tfLongBreakDuration.setPromptText(Integer.toString(pref.getInt("longBreakDuration", 10)));
-		tfShortBreakDuration.setPromptText(Integer.toString(pref.getInt("shortBreakDuration", 5)));
-		tfWorkDuration.setPromptText(Integer.toString(pref.getInt("workTimeDuration", 25)));
-		tfAmountOfShotBreak.setPromptText(Integer.toString(pref.getInt("amountOfCyclesTillLongBreak", 3)));
 		
-		if(pref.get("continousMode", "Yes").equals("Yes")){
+		pref = Preferences.userRoot();
+		tfLongBreakDuration.setPromptText(Integer.toString(pref.getInt(longBreakDurationPrefString, 10)));
+		tfShortBreakDuration.setPromptText(Integer.toString(pref.getInt(shortBreakDurationPrefString, 5)));
+		tfWorkDuration.setPromptText(Integer.toString(pref.getInt(workTimeDurationPrefString, 25)));
+		tfAmountOfShotBreak.setPromptText(Integer.toString(pref.getInt(amountOfCyclesTillLongBreakPrefString, 3)));
+		
+		if(pref.get(continouseModePrefString, yesKeyWord).equals(yesKeyWord)){
 			cbContiouseMode.setSelected(true);
 		}else{
 			cbContiouseMode.setSelected(false);
 		}
-		String[] projectsList = pref.get("projects", "All Pomorodo").split(",");
+		String[] projectsList = pref.get(projectsPrefString, allPomorodoPrefString).split(commaKeyWord);
 		ObservableList<String> items =FXCollections.observableArrayList (projectsList);
 		listView.setItems(items);
 	}
 	
+	/**
+	 * This will reset any project back to zero as if it didnt do anythings
+	 */
 	public void resetTask(){
 		if(listView.getSelectionModel().getSelectedIndex() != 0){
 			String resetProject = listView.getSelectionModel().getSelectedItem().toString();
 			pref.putInt(resetProject, 0);
-			pref.putInt((resetProject + " Total"), 0);
+			pref.putInt((resetProject + totalKeyWord), 0);
 			for(int i = 0; i < 7; i++){
-				pref.putInt((resetProject + " " + i), 0);
+				pref.putInt((resetProject + spaceKeyWord + i), 0);
 			}
 		}
 	}
@@ -107,7 +128,7 @@ public class SettingsController {
 			int j = 0;
 			String deletedWord = listView.getSelectionModel().getSelectedItem().toString();
 
-			String[] projectsList = pref.get("projects", "All Pomorodo").split(",");
+			String[] projectsList = pref.get(projectsPrefString, allPomorodoPrefString).split(commaKeyWord);
 			String[] newProjectList = new String[projectsList.length - 1];
 
 			
@@ -122,14 +143,14 @@ public class SettingsController {
 			StringBuilder words = new StringBuilder();
 			for(int i = 0; i < newProjectList.length; i++){
 				if(i < (newProjectList.length - 1)){
-					words.append(newProjectList[i] + ",");
+					words.append(newProjectList[i] + commaKeyWord);
 				}else{
 					words.append(newProjectList[i]);
 				}
 			}
 			String wordsToString = words.toString();
 
-			pref.put("projects", wordsToString);
+			pref.put(projectsPrefString, wordsToString);
 
 			ObservableList<String> items =FXCollections.observableArrayList (newProjectList);
 			listView.setItems(items);
@@ -139,13 +160,13 @@ public class SettingsController {
 		
 	}
 	public void addTask(){
-		pref.put("projects", (pref.get("projects", "All Pomorodo") + "," + efAddProject.getText()));
+		pref.put(projectsPrefString, (pref.get(projectsPrefString, allPomorodoPrefString) + commaKeyWord + efAddProject.getText()));
 		pref.putInt(efAddProject.getText(), 0);
-		pref.putInt((efAddProject.getText() + " Total"), 0);
+		pref.putInt((efAddProject.getText() + totalKeyWord), 0);
 		for(int i = 0; i < 7; i++){
-			pref.putInt((efAddProject.getText() + " " + i), 0);
+			pref.putInt((efAddProject.getText() + spaceKeyWord + i), 0);
 		}
-		String[] projectsList = pref.get("projects", "All Pomorodo").split(",");
+		String[] projectsList = pref.get(projectsPrefString, allPomorodoPrefString).split(commaKeyWord);
 		ObservableList<String> items =FXCollections.observableArrayList (projectsList);
 		listView.setItems(items);
 		efAddProject.setText("");
@@ -157,7 +178,7 @@ public class SettingsController {
 	 */
 	public void changeLongBreakTime(ActionEvent e){
 		try{
-			pref.putInt("longBreakDuration", Integer.parseInt(tfLongBreakDuration.getText()));
+			pref.putInt(longBreakDurationPrefString, Integer.parseInt(tfLongBreakDuration.getText()));
 		}catch(NumberFormatException e1){
 			System.out.println("That is not a valid number");
 		}
@@ -169,7 +190,7 @@ public class SettingsController {
 	 */
 	public void changeShortBreakTime(ActionEvent e){
 		try{
-			pref.putInt("shortBreakDuration", Integer.parseInt(tfShortBreakDuration.getText()));
+			pref.putInt(shortBreakDurationPrefString, Integer.parseInt(tfShortBreakDuration.getText()));
 		}catch(NumberFormatException e1){
 			System.out.println("That is not a valid number");
 		}
@@ -181,7 +202,7 @@ public class SettingsController {
 	 */
 	public void changeWorkTime(ActionEvent e){
 		try{
-			pref.putInt("workTimeDuration", Integer.parseInt(tfWorkDuration.getText()));
+			pref.putInt(workTimeDurationPrefString, Integer.parseInt(tfWorkDuration.getText()));
 		}catch(NumberFormatException e1){
 			System.out.println("That is not a valid number");
 		}
@@ -194,7 +215,7 @@ public class SettingsController {
 	 */
 	public void cahngeAmountOfTimesTillLongBreak(ActionEvent e){
 		try{
-			pref.putInt("amountOfCyclesTillLongBreak", Integer.parseInt(tfAmountOfShotBreak.getText()));
+			pref.putInt(amountOfCyclesTillLongBreakPrefString, Integer.parseInt(tfAmountOfShotBreak.getText()));
 		}catch(NumberFormatException e1){
 			System.out.println("That is not a valid number");
 		}
