@@ -1,5 +1,7 @@
 package application;
 	
+import java.util.Calendar;
+import java.util.Date;
 import java.util.prefs.Preferences;
 
 import javafx.application.Application;
@@ -43,8 +45,12 @@ public class Main extends Application {
 	@Override
 	public void stop(){
 		Preferences pref = Preferences.userRoot();
+		Calendar cal = Calendar.getInstance();
+		
 		int currentTime = pref.getInt("currentTime", 0);
 		pref.putInt(pref.get("CurrentProject", "All Pomorodo"), (pref.getInt(pref.get("CurrentProject", "All Pomorodo"), 0) + currentTime));
+		pref.putInt((pref.get("CurrentProject", "All Pomorodo") + " Total"), (pref.getInt(pref.get("CurrentProject", "All Pomorodo"), 0) + currentTime));
+		pref.putInt((pref.get("CurrentProject", "All Pomorodo") + " " + cal.get(Calendar.DAY_OF_WEEK)), (pref.getInt(pref.get("CurrentProject", "All Pomorodo"), 0) + currentTime));
 		pref.put("CurrentProject", "All Pomorodo");
 		pref.putInt("totalMinsWorked", currentTime);
 		pref.putInt("currentTime", 0);

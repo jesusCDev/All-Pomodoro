@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
@@ -325,7 +326,6 @@ public class TimeKeeper {
 	}
 	
 	public void save(){
-							System.out.println("PUTTING IN CURRENT TIME LINE FOUR: " + ((pref.getInt(project, 0) + currentTime)/60));
 		//pref.putInt(project, (pref.getInt(project, 0) + currentTime));
 	}
 	
@@ -335,6 +335,7 @@ public class TimeKeeper {
 	 * @return
 	 */
 	public String hardReset(String newVAlue){
+		Date date = new Date();
 		pref.putBoolean("Used", false);
 		pref.put("CurrentProject", newVAlue);
 		
@@ -343,11 +344,10 @@ public class TimeKeeper {
 		hboxCenter.setStyle("-fx-background-color: #FFFF00");
 		hboxTop.setStyle("-fx-background-color: #FFFF00");
 
-								System.out.println("PUTTING IN CURRENT TIME LINE THREE" + ((pref.getInt(project, 0) + currentTime)/60));
 		pref.putInt(project, (pref.getInt(project, 0) + currentTime));
+		pref.putInt((project + " Total"), (pref.getInt(project, 0) + currentTime));
+		pref.putInt((project + " " + date.getDay()), (pref.getInt(project, 0) + currentTime));
 
-		System.out.println("New Value: " + newVAlue);
-		System.out.println("Current Position: " + project);
 		this.project = newVAlue;
 		
 		currentTime = 0;
@@ -373,9 +373,7 @@ public class TimeKeeper {
 	 */
 	public void stop(){
 		pref.putBoolean("resumeTimeBoolean", true);
-		System.out.println("RESUEMD TIME " + timerTimeTracker);
 		pref.putInt("resumeTime", timerTimeTracker);
-		System.out.println("RESUMED TIME: " + pref.getInt("resumeTime", 8));
 		pref.putInt("resumeWhichTimerIsPlaying", whichTimerIsPlaying);
 		pref.putInt("lengthTillLongBreakTracker", lengthTillLongBreakTracker);
 		pref.putInt("resumebreakOrWork", breakOrWork);
@@ -411,9 +409,12 @@ public class TimeKeeper {
 		currentTime = pref.getInt("resumecurrentTime", currentTime);
 	}
 	
+	/**
+	 * This method runs only if resume is run when there is no time left to automatically start on the next 
+	 * @param seconds
+	 * @param workBreak
+	 */
 	public void resume(int seconds, int workBreak){
-		System.out.println("Seconds: " + seconds);
-		System.out.println("WorkBreak: " + workBreak);
 		pref.putBoolean("resumeTimeBoolean", false);
 		timerTimeTracker = seconds;
 		whichTimerIsPlaying = workBreak;

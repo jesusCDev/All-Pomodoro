@@ -67,11 +67,23 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
             </GridPane>
-            <Button fx:id="btnDeleteProject" alignment="CENTER" mnemonicParsing="false" onAction="#deleteTask" prefHeight="25.0" prefWidth="576.0" text="Delete">
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="btnDeleteProject" alignment="CENTER" mnemonicParsing="false" onAction="#deleteTask" prefHeight="25.0" prefWidth="576.0" text="Delete">
+                     <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="btnResetProject" mnemonicParsing="false" onAction="#resetTask" prefHeight="25.0" prefWidth="559.0" text="Reset">
+                     <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
                <VBox.margin>
-                  <Insets left="10.0" right="10.0" top="10.0" />
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
-            </Button>
+            </HBox>
             <ListView fx:id="listView" prefHeight="262.0" prefWidth="580.0">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />

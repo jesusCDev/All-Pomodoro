@@ -4,6 +4,8 @@ import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.prefs.Preferences;
 
 import javafx.beans.value.ChangeListener;
@@ -16,6 +18,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
@@ -90,11 +93,84 @@ public class StartPomorodoController {
 	 */
 	public void initialize(){
 		Preferences pref = Preferences.userRoot();
+		Calendar cal = Calendar.getInstance();
+
+		String today = cal.get(Calendar.MONTH) + " " + cal.get(Calendar.DAY_OF_MONTH);
+		String firstTimeUsing = "FirstTimeUsing";
+		String todaysDate = "todaysDate";
+		String lastTimeUsedDayOfYear = "lastTimeUsedDayOfYear";
+		String lastTimeUsedDayOfWeek = "lastTimeUsedDayOfWeek";
+		String lastTimeUsedWeekOfYear = "lastTimeUsedWeekOfYear";
+		String lastTimeUsedYear = "lastTimeUsedYear";
+				
+		//this will only run the first time you run the program
+		if(pref.getBoolean(firstTimeUsing, true) == true){
+			pref.putBoolean(firstTimeUsing, false);
+			pref.put(todaysDate, today);
+			pref.putInt(lastTimeUsedDayOfWeek, cal.get(Calendar.DAY_OF_WEEK));
+			pref.putInt(lastTimeUsedWeekOfYear, cal.get(Calendar.WEEK_OF_YEAR));
+			pref.putInt(lastTimeUsedDayOfYear, cal.get(Calendar.DAY_OF_YEAR));
+			pref.putInt(lastTimeUsedYear, cal.get(Calendar.YEAR));
+		}
+		
+		//will resety the information when you first start the app on a different dzy
+		if(!today.equals(pref.get(todaysDate, "Nope"))){
+			
+			String[] projectsList = pref.get("projects", "All Pomorodo").split(",");
+			
+			//TODO DO WE NEED TO SAVE THIS CONSIDERING WE ALREADY SAVED THAT OTHER TIME
+			//this saves the values before we delete them
+			for(int i = 0; i < projectsList.length; i++){
+				pref.putInt((projectsList[i] + " Total"), pref.getInt(projectsList[i], 0));
+				pref.putInt((projectsList[i] + " " + pref.getInt(lastTimeUsedDayOfWeek, 0)), pref.getInt(projectsList[i], 0));	
+			}
+
+		//WILL CHECK IF YOU MISSED A DAY AND SET THE VALUES TO ZERO FOR THE DAYS MISSED IN THE WEEK
+			if(((cal.get(Calendar.DAY_OF_YEAR) - pref.getInt(lastTimeUsedDayOfYear, 0)) < 7) && (cal.get(Calendar.YEAR) == pref.getInt(lastTimeUsedYear, 0))){
+				for(int j = 0; j < projectsList.length; j++){
+					for(int i = ((cal.get(Calendar.DAY_OF_YEAR) - pref.getInt(lastTimeUsedDayOfYear, 0)) - 1); i > 0; i--){
+						pref.putInt((projectsList[j] + " " + (Calendar.DAY_OF_WEEK - i)), 0);
+					}
+				}
+			}
+			if(cal.get(Calendar.YEAR) != pref.getInt(lastTimeUsedYear, 0)){
+				if((365 - cal.get(Calendar.YEAR)) < 7){
+					for(int j = 0; j < projectsList.length; j++){
+						for(int i = ((cal.get(Calendar.DAY_OF_WEEK) - pref.getInt(lastTimeUsedDayOfWeek, 0)) - 1); i > 0; i--){
+							pref.putInt((projectsList[j] + " " + (Calendar.DAY_OF_WEEK - i)), 0);
+						}
+					}
+				}
+			}
+		//WILL CHECK IF YOU MISSED A DAY AND SET THE VALUES TO ZERO FOR THE DAYS MISSED IN THE WEEK
+			
+		//section will focus on reseting the values incase you are in a new week
+			if((cal.get(Calendar.WEEK_OF_YEAR) != pref.getInt(lastTimeUsedWeekOfYear, 0)) && (cal.get(Calendar.DAY_OF_YEAR) > 6)){
+				for(int j = 0; j < projectsList.length; j++){
+					for(int i = 0; i < 7; i++){
+						pref.putInt((projectsList[j] + " " + i), 0);
+					}
+				}
+				pref.putInt(lastTimeUsedWeekOfYear, cal.get(Calendar.WEEK_OF_YEAR));
+			}
+		//section will focus on reseting the values incase you are in a new week
+			
+			//Will set all the values for today to zero so a fresh start
+			for(int i = 0; i < projectsList.length; i++){
+				pref.putInt(projectsList[i], 0);
+			}
+			
+			pref.put(todaysDate, today);
+			pref.putInt(lastTimeUsedDayOfWeek, cal.get(Calendar.DAY_OF_WEEK));
+			pref.putInt(lastTimeUsedWeekOfYear, cal.get(Calendar.WEEK_OF_YEAR));
+			pref.putInt(lastTimeUsedDayOfYear, cal.get(Calendar.DAY_OF_YEAR));
+			pref.putInt(lastTimeUsedYear, cal.get(Calendar.YEAR));
+		}
 		
 		toolKit = Toolkit.getDefaultToolkit();
-
 		timer = new TimeKeeper(lbTimer, pref.get("continousMode", "Yes"), hboxTop, hboxCenter, hboxBottom, spinnerProjects, btnPlayAndPause);
 		
+		//this will handle the spinner
 		String[] projectsList = pref.get("projects", "All Pomorodo").split(",");
 		ObservableList<String> projects = FXCollections.observableArrayList(projectsList);
 		SpinnerValueFactory<String> valueFactory = new SpinnerValueFactory.ListSpinnerValueFactory<String>(projects);
@@ -108,13 +184,12 @@ public class StartPomorodoController {
 	    
 	    );
 	    
-	    
+	    //this will take care of the timer and set the time for which it is when resumed
 		int seconds = (pref.getInt("workTimeDuration", 25) * 60);
 		if(pref.getBoolean("resumeTimeBoolean", false) == true){
-			System.out.println("Resumed");
 			seconds = (pref.getInt("resumeTime", 0));
 			int workBreak = pref.getInt("resumeWhichTimerIsPlaying", 0);
-			if(pref.getInt("resumeTime", 0) == 0){
+			if(pref.getInt("resumeTime", 0) == 0){ 
 				if(workBreak == 1){
 					seconds = (pref.getInt("shortBreakDuration", 25) * 60);
 				}else if(workBreak == 2){
@@ -131,8 +206,7 @@ public class StartPomorodoController {
 			pref.putInt("resumeTime", 0);
 		}
 		
-		//displayTime
-		
+		//this puts the time in the correct format
 		int minLeft = (seconds/60);
 		int secondsLeft = (seconds - (minLeft * 60));
 		if((seconds%60) == 0){
@@ -155,22 +229,27 @@ public class StartPomorodoController {
 	public void playPauseBtn(ActionEvent e){
 		toolKit.beep();
 		SetWindowSize();
+		
 		if(playPauseTracker == 1 || btnPlayAndPause.getText().equals("Play")){
 			System.out.println("Play");
+			
 			spinnerProjects.setDisable(true);
-			hboxBottom.setStyle("-fx-background-color: #00E676");
-			hboxCenter.setStyle("-fx-background-color: #00E676");
-			hboxTop.setStyle("-fx-background-color: #00E676");
+			String color = "-fx-background-color: #00E676";
+			hboxBottom.setStyle(color);
+			hboxCenter.setStyle(color);
+			hboxTop.setStyle(color);
 			
 			timer.playAndPause();
 			btnPlayAndPause.setText("Pause");
 			playPauseTracker *= -1;
 		}else{
 			System.out.println("Pause");
+			
 			spinnerProjects.setDisable(false);
-			hboxBottom.setStyle("-fx-background-color: #FFFF00");
-			hboxCenter.setStyle("-fx-background-color: #FFFF00");
-			hboxTop.setStyle("-fx-background-color: #FFFF00");
+			String color = "-fx-background-color: #FFFF00";
+			hboxBottom.setStyle(color);
+			hboxCenter.setStyle(color);
+			hboxTop.setStyle(color);
 			
 			timer.playAndPause();
 			btnPlayAndPause.setText("Play");

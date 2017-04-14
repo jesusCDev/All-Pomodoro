@@ -35,6 +35,7 @@ public class SettingsController {
 	TextField efAddProject;
 	
 	Preferences pref;
+	
 	public void cbCheckContinousMode(){
 		System.out.println("Changed");
 		if(cbContiouseMode.isSelected()){
@@ -88,6 +89,17 @@ public class SettingsController {
 		listView.setItems(items);
 	}
 	
+	public void resetTask(){
+		if(listView.getSelectionModel().getSelectedIndex() != 0){
+			String resetProject = listView.getSelectionModel().getSelectedItem().toString();
+			pref.putInt(resetProject, 0);
+			pref.putInt((resetProject + " Total"), 0);
+			for(int i = 0; i < 7; i++){
+				pref.putInt((resetProject + " " + i), 0);
+			}
+		}
+	}
+	
 	public void deleteTask(){
 
 		
@@ -124,10 +136,15 @@ public class SettingsController {
 		}else{
 			System.out.println("Sorry, Can't delete that one.");
 		}
+		
 	}
 	public void addTask(){
 		pref.put("projects", (pref.get("projects", "All Pomorodo") + "," + efAddProject.getText()));
 		pref.putInt(efAddProject.getText(), 0);
+		pref.putInt((efAddProject.getText() + " Total"), 0);
+		for(int i = 0; i < 7; i++){
+			pref.putInt((efAddProject.getText() + " " + i), 0);
+		}
 		String[] projectsList = pref.get("projects", "All Pomorodo").split(",");
 		ObservableList<String> items =FXCollections.observableArrayList (projectsList);
 		listView.setItems(items);
