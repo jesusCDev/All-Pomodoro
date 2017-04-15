@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
-import com.sun.javafx.scene.control.skin.LabeledText;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,7 +14,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
-import javafx.scene.chart.PieChart.Data;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -37,6 +34,10 @@ public class ChartController {
 	@FXML
 	PieChart dailyActivities;
 	
+	/**
+	 * returns it to the timer screen
+	 * @param e
+	 */
 	public void goBackToMainMenu(ActionEvent e){
 		Parent loader = null;
 		try {
@@ -54,23 +55,63 @@ public class ChartController {
 		stage.show();
 	}
 	
+	/**
+	 * Method will set all the values for the pie chart and the other graphs
+	 */
 	public void initialize(){
+		Preferences pref = Preferences.userRoot();
+		
+		String pieChartsTitle = "Today's Progress";
+		String pieChartsWastedTimeTitle = "Mintues of the day not use.";
 		
 		//Preference names
 		String projectsPrefString = "projects";
 		String allPomorodoPrefString = "All Pomorodo";
 		String currentProjectPrefString = "currentProject";
-						
 		String overAllTimePrefString = "Overall Time: ";
 		String currentTimePrefString = "currentTime";
 		String programmingPrefString = "Programming";
 		String homeworkPrefString = "Homework";
 		String workoutPrefString = "Workout";
-				
-				
-		Preferences pref = Preferences.userRoot();
-		labelOne.setText(overAllTimePrefString + (((pref.getInt(currentTimePrefString, 0)) + (pref.getInt(allPomorodoPrefString, 0)) + (pref.getInt(programmingPrefString, 0)) + (pref.getInt(homeworkPrefString, 0)) + (pref.getInt(workoutPrefString, 0)))/60));
 		
+		//PIE CHART
+		ArrayList<PieChart.Data> pieChartDataNamesAndValues = new ArrayList<>();
+		String[] projectsList = pref.get(projectsPrefString, allPomorodoPrefString).split(",");
+		
+		for(int i = 1; i < projectsList.length; i++){
+			PieChart.Data data = null;
+			if(pref.get(currentProjectPrefString, allPomorodoPrefString).equals(projectsList[i])){
+				data = new PieChart.Data(projectsList[i], (((pref.getInt(projectsList[i], 0)) + (pref.getInt(currentTimePrefString, 0)))/60));	
+			}else{
+				data = new PieChart.Data(projectsList[i], (pref.getInt(projectsList[i], 0)/60));				
+			}
+			pieChartDataNamesAndValues.add(data);
+		}
+				
+		int minutesOfToday = 24 * 60;
+		int minutesUsedFromProjects = ((pref.getInt(currentTimePrefString, 0)) + (pref.getInt(allPomorodoPrefString, 0)) + (pref.getInt(programmingPrefString, 0)) + (pref.getInt(homeworkPrefString, 0)) + (pref.getInt(workoutPrefString, 0))/60);
+		int hoursNotUsing = minutesOfToday - minutesUsedFromProjects;
+		
+		PieChart.Data data = new PieChart.Data(pieChartsWastedTimeTitle, hoursNotUsing);
+		pieChartDataNamesAndValues.add(data);
+		
+		ObservableList<PieChart.Data> details = FXCollections.observableArrayList(pieChartDataNamesAndValues);
+		dailyActivities.setData(details);
+		dailyActivities.setTitle(pieChartsTitle);
+		dailyActivities.setLegendSide(Side.BOTTOM);
+		
+		
+		//Handles the spinner
+		ObservableList<String> projects = FXCollections.observableArrayList(projectsList);
+		SpinnerValueFactory<String> valueFactory = new SpinnerValueFactory.ListSpinnerValueFactory<String>(projects);
+		valueFactory.setValue(pref.get(currentProjectPrefString, allPomorodoPrefString));
+		spinnerProject2.setValueFactory(valueFactory);
+		spinnerProject2.getStyleClass().add(spinnerProject2.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+		spinnerProject2.valueProperty().addListener((obs, oldValue, newValue) -> makeVisible(newValue.toString()));
+		
+		
+		//This handles the Labels
+		labelOne.setText(overAllTimePrefString + (((pref.getInt(currentTimePrefString, 0)) + (pref.getInt(allPomorodoPrefString, 0)) + (pref.getInt(programmingPrefString, 0)) + (pref.getInt(homeworkPrefString, 0)) + (pref.getInt(workoutPrefString, 0)))/60));
 		labelTwo.setText("Programming time: " + ((pref.getInt(programmingPrefString, 0))/60));
 		labelThree.setText("Homework time: " + ((pref.getInt(homeworkPrefString, 0))/60));
 		labelFour.setText("Workout time: " + ((pref.getInt(workoutPrefString, 0))/60));
@@ -82,49 +123,12 @@ public class ChartController {
 		}else if(pref.get(currentProjectPrefString, allPomorodoPrefString).equals(workoutPrefString)){
 			labelFour.setText("Workout time: " + (((pref.getInt(workoutPrefString, 0))/60) + ((pref.getInt(currentTimePrefString, 0))/60)));			
 		}
-		
-		ArrayList<PieChart.Data> stuff = new ArrayList<>();
-		String[] projectsList = pref.get(projectsPrefString, allPomorodoPrefString).split(",");
-		
-		for(int i = 1; i < projectsList.length; i++){
-			PieChart.Data data = null;
-			if(pref.get(currentProjectPrefString, allPomorodoPrefString).equals(projectsList[i])){
-				data = new PieChart.Data(projectsList[i], ((pref.getInt(projectsList[i], 0) + (pref.getInt(currentTimePrefString, 0)))/60));	
-			}else{
-				data = new PieChart.Data(projectsList[i], (pref.getInt(projectsList[i], 0)/60));				
-			}
-			stuff.add(data);
-		}
-				
-		int today = 24 * 60;
-		int used = ((((pref.getInt(currentTimePrefString, 0)) + (pref.getInt(allPomorodoPrefString, 0)) + (pref.getInt(programmingPrefString, 0)) + (pref.getInt(homeworkPrefString, 0)) + (pref.getInt(workoutPrefString, 0)))));
-		int hoursNotUsing = today - used;
-		
-		PieChart.Data data = new PieChart.Data("Mintues Not In Use", hoursNotUsing);
-		stuff.add(data);
-		
-		//pie chart
-		ObservableList<PieChart.Data> details = FXCollections.observableArrayList(stuff);
-		
-		dailyActivities.setData(details);
-		dailyActivities.setTitle("Daily Progress");
-		dailyActivities.setLegendSide(Side.BOTTOM);
-		
-		
-		//spinner
-		ObservableList<String> projects = FXCollections.observableArrayList(projectsList);
-		SpinnerValueFactory<String> valueFactory = new SpinnerValueFactory.ListSpinnerValueFactory<String>(projects);
-		valueFactory.setValue(pref.get(currentProjectPrefString, allPomorodoPrefString));
-		spinnerProject2.setValueFactory(valueFactory);
-		spinnerProject2.getStyleClass().add(spinnerProject2.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
-		
-		spinnerProject2.valueProperty().addListener((obs, oldValue, newValue) -> 
-	    
-	    	makeVisible(newValue.toString())
-		
-	    );
 	}
 	
+	/**
+	 * will be deleted
+	 * @param newValue
+	 */
 	public void makeVisible(String newValue){
 		//if(!newValue.equals("All Pomorodo")){
 		    labelTwo.setVisible(false);

@@ -42,12 +42,10 @@ public class StartPomorodoController {
 	@FXML
 	Spinner spinnerProjects;
 	
-	int playPauseTracker = 1;
-	TimeKeeper timer;
-	Toolkit toolKit;
+	private int playPauseTracker = 1;
+	private TimeKeeper timer;
+	private Toolkit toolKit;
 	
-	//TODO MAYBE DELETE THIS TOO, DOESN'T SEEM TO DO ANYTHING
-	String currentProject = "All Pomorodo";
 	/**
 	 * This button action will let you see your settings and lets you affect them
 	 * you can change period amounts
@@ -74,7 +72,6 @@ public class StartPomorodoController {
 	 * @param event
 	 */
 	public void btnSeeGraph(ActionEvent event){
-		timer.save();
 		timer.stop();
 		Parent loader = null;
 		try {
@@ -194,26 +191,26 @@ public class StartPomorodoController {
 		
 	    spinnerProjects.valueProperty().addListener((obs, oldValue, newValue) -> 
 	    
-	    currentProject = timer.hardReset(newValue.toString())
+	    timer.hardReset(newValue.toString())
 	    
 	    );
 	    
 	    //this will take care of the timer and set the time for which it is when resumed
-		int seconds = (pref.getInt(workTimeDurationPrefString, 25) * 60);
+		int currentSecondsForTimer = (pref.getInt(workTimeDurationPrefString, 25) * 60);
 		if(pref.getBoolean(resumeTimeBooleanPrefString, false) == true){
-			seconds = (pref.getInt(resumeTimePrefString, 0));
-			int workBreak = pref.getInt(resumeWhichTimerIsPlayingPrefString, 0);
+			currentSecondsForTimer = (pref.getInt(resumeTimePrefString, 0));
+			int whichTimerPeriodIsPlaying = pref.getInt(resumeWhichTimerIsPlayingPrefString, 0);
 			if(pref.getInt(resumeTimePrefString, 0) == 0){ 
-				if(workBreak == 1){
-					seconds = (pref.getInt(shortBreakDurationPrefString, 25) * 60);
-				}else if(workBreak == 2){
-					seconds = (pref.getInt(longBreakDurationPrefString, 25) * 60);
+				if(whichTimerPeriodIsPlaying == 1){
+					currentSecondsForTimer = (pref.getInt(shortBreakDurationPrefString, 25) * 60);
+				}else if(whichTimerPeriodIsPlaying == 2){
+					currentSecondsForTimer = (pref.getInt(longBreakDurationPrefString, 25) * 60);
 				}else{
-					seconds = (pref.getInt(workTimeDurationPrefString, 25) * 60);
+					currentSecondsForTimer = (pref.getInt(workTimeDurationPrefString, 25) * 60);
 				}
 			}
 			if(pref.getInt(resumeTimePrefString, 0) == 0){
-				timer.resume(seconds, workBreak);
+				timer.resume(currentSecondsForTimer, whichTimerPeriodIsPlaying);
 			}else{
 				timer.resume();
 			}
@@ -221,11 +218,11 @@ public class StartPomorodoController {
 		}
 		
 		//Change the label for the time in the correct format
-		int minLeft = (seconds/60);
-		int secondsLeft = (seconds - (minLeft * 60));
-		if((seconds%60) == 0){
-			lbTimer.setText(minLeft + ":" + "00");
-		}else if(seconds == 0){
+		int minLeft = (currentSecondsForTimer/60);
+		int secondsLeft = (currentSecondsForTimer - (minLeft * 60));
+		if((currentSecondsForTimer % 60) == 0){
+			lbTimer.setText(minLeft + ":00");
+		}else if(currentSecondsForTimer == 0){
 			lbTimer.setText("00:00");
 		}else if(secondsLeft < 10){
 			lbTimer.setText(minLeft + ":0" + secondsLeft);
@@ -235,21 +232,20 @@ public class StartPomorodoController {
 	}
 	
 	/**
-	 * This is an action taht will be performed when the play button is pressed
-	 * This wlll click the play and pause button
+	 * This is an method will be performed when the play button is pressed
 	 * @param e
 	 */
 	@FXML
 	public void playPauseBtn(ActionEvent e){
-		toolKit.beep();
-		SetWindowSize();
 		String play = "Play";
 		String pause = "Pause";
+		String playColor = "-fx-background-color: #00E676";
+		String pauseColor = "-fx-background-color: #FFFF00";
+		
+		toolKit.beep();
+		SetWindowSize();
 		
 		if(playPauseTracker == 1 || btnPlayAndPause.getText().equals(play)){
-			System.out.println(play);
-			String playColor = "-fx-background-color: #00E676";
-			
 			spinnerProjects.setDisable(true);
 			hboxBottom.setStyle(playColor);
 			hboxCenter.setStyle(playColor);
@@ -259,9 +255,6 @@ public class StartPomorodoController {
 			btnPlayAndPause.setText(pause);
 			playPauseTracker *= -1;
 		}else{
-			System.out.println(pause);
-			String pauseColor = "-fx-background-color: #FFFF00";
-			
 			spinnerProjects.setDisable(false);
 			hboxBottom.setStyle(pauseColor);
 			hboxCenter.setStyle(pauseColor);
@@ -281,7 +274,6 @@ public class StartPomorodoController {
 	@FXML
 	public void skipBtn(ActionEvent e){
 		toolKit.beep();
-		System.out.println("Skip");
 		SetWindowSize();
 		timer.skip();
 	}
@@ -294,7 +286,6 @@ public class StartPomorodoController {
 	@FXML
 	public void resetBtn(ActionEvent e){
 		toolKit.beep();
-		System.out.println("Reset");
 		timer.reset();
 	}
 	

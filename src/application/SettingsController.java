@@ -1,7 +1,6 @@
 package application;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.prefs.Preferences;
 
 import javafx.collections.FXCollections;
@@ -113,46 +112,50 @@ public class SettingsController {
 	public void resetTask(){
 		if(listView.getSelectionModel().getSelectedIndex() != 0){
 			String resetProject = listView.getSelectionModel().getSelectedItem().toString();
-			pref.putInt(resetProject, 0);
-			pref.putInt((resetProject + totalKeyWord), 0);
-			for(int i = 0; i < 7; i++){
-				pref.putInt((resetProject + spaceKeyWord + i), 0);
+			//resets current values
+			pref.putInt(resetProject, 0); 
+			//resets total values
+			pref.putInt((resetProject + totalKeyWord), 0); 
+			//resets daily values
+			for(int i = 0; i < 7; i++){ 
+				pref.putInt((resetProject + spaceKeyWord + i), 0); 
 			}
 		}
 	}
 	
+	/**
+	 * Will use selected word and delete it from the selection list
+	 */
 	public void deleteTask(){
-
 		
 		if(listView.getSelectionModel().getSelectedIndex() != 0){
-			int j = 0;
-			String deletedWord = listView.getSelectionModel().getSelectedItem().toString();
+			String wordBeingDeleted = listView.getSelectionModel().getSelectedItem().toString();
 
 			String[] projectsList = pref.get(projectsPrefString, allPomorodoPrefString).split(commaKeyWord);
-			String[] newProjectList = new String[projectsList.length - 1];
+			String[] newProjectsList = new String[projectsList.length - 1];
 
 			
 			int iterator = 0;
 			for(int i = 0; i < projectsList.length; i++){
-				if(!projectsList[i].equals(deletedWord)){
-					newProjectList[iterator] = projectsList[i];
+				if(!projectsList[i].equals(wordBeingDeleted)){
+					newProjectsList[iterator] = projectsList[i];
 					iterator++;
 				}
 			}
 
 			StringBuilder words = new StringBuilder();
-			for(int i = 0; i < newProjectList.length; i++){
-				if(i < (newProjectList.length - 1)){
-					words.append(newProjectList[i] + commaKeyWord);
+			for(int i = 0; i < newProjectsList.length; i++){
+				if(i < (newProjectsList.length - 1)){
+					words.append(newProjectsList[i] + commaKeyWord);
 				}else{
-					words.append(newProjectList[i]);
+					words.append(newProjectsList[i]);
 				}
 			}
 			String wordsToString = words.toString();
 
 			pref.put(projectsPrefString, wordsToString);
 
-			ObservableList<String> items =FXCollections.observableArrayList (newProjectList);
+			ObservableList<String> items =FXCollections.observableArrayList (newProjectsList);
 			listView.setItems(items);
 		}else{
 			System.out.println("Sorry, Can't delete that one.");
@@ -160,12 +163,14 @@ public class SettingsController {
 		
 	}
 	public void addTask(){
+		//adds projects to current project string
 		pref.put(projectsPrefString, (pref.get(projectsPrefString, allPomorodoPrefString) + commaKeyWord + efAddProject.getText()));
 		pref.putInt(efAddProject.getText(), 0);
 		pref.putInt((efAddProject.getText() + totalKeyWord), 0);
 		for(int i = 0; i < 7; i++){
 			pref.putInt((efAddProject.getText() + spaceKeyWord + i), 0);
 		}
+		
 		String[] projectsList = pref.get(projectsPrefString, allPomorodoPrefString).split(commaKeyWord);
 		ObservableList<String> items =FXCollections.observableArrayList (projectsList);
 		listView.setItems(items);

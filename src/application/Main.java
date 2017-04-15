@@ -1,7 +1,6 @@
 package application;
 	
 import java.util.Calendar;
-import java.util.Date;
 import java.util.prefs.Preferences;
 
 import javafx.application.Application;
@@ -9,7 +8,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 
 
 /**
@@ -52,6 +50,8 @@ public class Main extends Application {
 		String currentProjectPrefString = "CurrentProject";
 		String allPomorodoPrefString = "All Pomorodo";
 		String currentTimePrefString = "currentTime";
+		String resumeWhichTimerIsPlayingPrefString = "resumeWhichTimerIsPlaying";
+		String totalTimeWorkingPrefString = "totalTimeWorking";
 		
 		String totalKeyWord = " Total";
 		String spaceKeyWord = " ";
@@ -67,9 +67,7 @@ public class Main extends Application {
 		pref.put(currentProjectPrefString, allPomorodoPrefString);
 		pref.putInt(currentTimePrefString, 0);
 		
-		//TODO This might be deleted
-		pref.putInt("totalMinsWorked", currentTime);
-		//TODO this will might be deleted
-		pref.putInt("resumeWhichTimerIsPlaying", 3);
+		pref.putInt(resumeWhichTimerIsPlayingPrefString, 3);
+		pref.putInt(totalTimeWorkingPrefString, (pref.getInt(totalTimeWorkingPrefString, 0) + currentTime));
 	}
 }
