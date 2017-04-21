@@ -1,7 +1,9 @@
 package application;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.text.spi.NumberFormatProvider;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -60,6 +62,7 @@ public class ChartController {
 	TextField TFMinAddSubtract;
 	
 	private Preferences pref;
+	private String currentProjectName = "All Pomorodo";
 	private String currentTimePrefString = "overAllTimeCountedInCurrentProject";
 	private String currentProjectPrefString = "currentProject";
 	private String allPomorodoPrefString = "All Pomorodo";
@@ -85,6 +88,16 @@ public class ChartController {
 	private String sixWord = " 6";
 	private String sevenWord = " 7";
 	
+
+	String pieChartsTitle = "Today's Progress";
+	String pieChartsWastedTimeTitle = "Mintues of the day not use.";
+	
+	//Preference names
+	String projectsPrefString = "projects";
+	String programmingPrefString = "Programming";
+	String homeworkPrefString = "Homework";
+	String workoutPrefString = "Workout";
+	
 	private int dayOfWeek;
 	
 	/**
@@ -95,7 +108,6 @@ public class ChartController {
 		sbVBCenter.valueProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> ov,
 				Number old_val, Number new_val) {
-				System.out.println(-new_val.doubleValue()*5);
 				bpChartAll.setLayoutY(-new_val.doubleValue()*5);
 			}
 		});
@@ -103,15 +115,6 @@ public class ChartController {
 		
 		Calendar cal = Calendar.getInstance();
 		dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-		
-		String pieChartsTitle = "Today's Progress";
-		String pieChartsWastedTimeTitle = "Mintues of the day not use.";
-		
-		//Preference names
-		String projectsPrefString = "projects";
-		String programmingPrefString = "Programming";
-		String homeworkPrefString = "Homework";
-		String workoutPrefString = "Workout";
 		
 		
 		//Handles Pie Chart
@@ -229,7 +232,10 @@ public class ChartController {
 	 * it presents the information in the  bottom graph of it
 	 * @param projectName
 	 */
-	private void makeVisible(String projectName) {
+	private void makeVisible(String currentProjectName) {
+		
+		TFMinAddSubtract.setText("");
+		this.currentProjectName = currentProjectName;
 		
 		weeklyActivites.getData().clear();
 		weeklyActivites.layout();
@@ -240,7 +246,7 @@ public class ChartController {
 		xAxis.setLabel(daysWord);
 				
 		XYChart.Series series = new XYChart.Series();
-		series.setName(projectName);
+		series.setName(currentProjectName);
 		
 		int sunday = 0;
 		int monday = 0;
@@ -250,55 +256,55 @@ public class ChartController {
 		int friday = 0;
 		int saturday = 0;
 
-		totalMin.setText(totalMinWord + ((pref.getInt(projectName + totalKeyWord, 0))/60));
-		todayMin.setText(todaysMinWord + ((pref.getInt(projectName, 0))/60));
-		if(projectName.equals(pref.get(currentProjectPrefString, allPomorodoPrefString))){
+		totalMin.setText(totalMinWord + ((pref.getInt(currentProjectName + totalKeyWord, 0))/60));
+		todayMin.setText(todaysMinWord + ((pref.getInt(currentProjectName, 0))/60));
+		if(currentProjectName.equals(pref.get(currentProjectPrefString, allPomorodoPrefString))){
 			switch(dayOfWeek){
 				case 1:
 					sunday = ((pref.getInt(currentTimePrefString, 0)));
-					totalMin.setText(totalMinWord + ((pref.getInt(projectName + totalKeyWord, 0) + sunday)/60));
-					todayMin.setText(todaysMinWord + ((pref.getInt(projectName, 0) + sunday)/60));
+					totalMin.setText(totalMinWord + ((pref.getInt(currentProjectName + totalKeyWord, 0) + sunday)/60));
+					todayMin.setText(todaysMinWord + ((pref.getInt(currentProjectName, 0) + sunday)/60));
 					break;
 				case 2:
 					monday = ((pref.getInt(currentTimePrefString, 0)));
-					totalMin.setText(totalMinWord + ((pref.getInt(projectName + totalKeyWord, 0) + monday)/60));
-					todayMin.setText(todaysMinWord + ((pref.getInt(projectName, 0) + monday)/60));
+					totalMin.setText(totalMinWord + ((pref.getInt(currentProjectName + totalKeyWord, 0) + monday)/60));
+					todayMin.setText(todaysMinWord + ((pref.getInt(currentProjectName, 0) + monday)/60));
 					break;
 				case 3:
 					tuesday = ((pref.getInt(currentTimePrefString, 0)));
-					totalMin.setText(totalMinWord + ((pref.getInt(projectName + totalKeyWord, 0) + tuesday)/60));
-					todayMin.setText(todaysMinWord + ((pref.getInt(projectName, 0) + tuesday)/60));
+					totalMin.setText(totalMinWord + ((pref.getInt(currentProjectName + totalKeyWord, 0) + tuesday)/60));
+					todayMin.setText(todaysMinWord + ((pref.getInt(currentProjectName, 0) + tuesday)/60));
 					break;
 				case 4:
 					wednesday = ((pref.getInt(currentTimePrefString, 0)));
-					totalMin.setText(totalMinWord + ((pref.getInt(projectName + totalKeyWord, 0) + wednesday)/60));
-					todayMin.setText(todaysMinWord + ((pref.getInt(projectName, 0) + wednesday)/60));
+					totalMin.setText(totalMinWord + ((pref.getInt(currentProjectName + totalKeyWord, 0) + wednesday)/60));
+					todayMin.setText(todaysMinWord + ((pref.getInt(currentProjectName, 0) + wednesday)/60));
 					break;
 				case 5:
 					thursday = ((pref.getInt(currentTimePrefString, 0)));
-					totalMin.setText(totalMinWord + ((pref.getInt(projectName + totalKeyWord, 0) + thursday)/60));
-					todayMin.setText(todaysMinWord + ((pref.getInt(projectName, 0) + thursday)/60));
+					totalMin.setText(totalMinWord + ((pref.getInt(currentProjectName + totalKeyWord, 0) + thursday)/60));
+					todayMin.setText(todaysMinWord + ((pref.getInt(currentProjectName, 0) + thursday)/60));
 					break;
 				case 6:
 					friday = ((pref.getInt(currentTimePrefString, 0)));
-					totalMin.setText(totalMinWord + ((pref.getInt(projectName + totalKeyWord, 0) + friday)/60));
-					todayMin.setText(todaysMinWord + ((pref.getInt(projectName, 0) + friday)/60));
+					totalMin.setText(totalMinWord + ((pref.getInt(currentProjectName + totalKeyWord, 0) + friday)/60));
+					todayMin.setText(todaysMinWord + ((pref.getInt(currentProjectName, 0) + friday)/60));
 					break;
 				case 7:
 					saturday = ((pref.getInt(currentTimePrefString, 0)));
-					totalMin.setText(totalMinWord + ((pref.getInt(projectName + totalKeyWord, 0) + saturday)/60));
-					todayMin.setText(todaysMinWord + ((pref.getInt(projectName, 0) + saturday)/60));
+					totalMin.setText(totalMinWord + ((pref.getInt(currentProjectName + totalKeyWord, 0) + saturday)/60));
+					todayMin.setText(todaysMinWord + ((pref.getInt(currentProjectName, 0) + saturday)/60));
 					break;
 			}
 		}
 
-		String projectNameSunday = (projectName + oneWord);
-		String projectNameMonday = (projectName + twoWord);
-		String projectNameTuesday = (projectName + threeWord);
-		String projectNameWednesday = (projectName + fourWord);
-		String projectNameThursday = (projectName + fiveWord);
-		String projectNameFriday = (projectName + sixWord);
-		String projectNameSaturday = (projectName + sevenWord);
+		String projectNameSunday = (currentProjectName + oneWord);
+		String projectNameMonday = (currentProjectName + twoWord);
+		String projectNameTuesday = (currentProjectName + threeWord);
+		String projectNameWednesday = (currentProjectName + fourWord);
+		String projectNameThursday = (currentProjectName + fiveWord);
+		String projectNameFriday = (currentProjectName + sixWord);
+		String projectNameSaturday = (currentProjectName + sevenWord);
 		
 		series.getData().add(new XYChart.Data(sundayWord, (((pref.getInt(projectNameSunday, 0)) + sunday)/60)));
 		series.getData().add(new XYChart.Data(mondayWord, (((pref.getInt(projectNameMonday, 0)) + monday)/60)));
@@ -318,11 +324,92 @@ public class ChartController {
 	 * @param e
 	 */
 	public void addSubtractMinutes(ActionEvent e){
-		String date = dpMinAddSubtract.getValue().toString();
-		String day = dpMinAddSubtract.getValue().get(Calendar.DAY_OF_YEAR);
-		System.out.println(date);
+		
+		//TODO REMMEBER TO CLOSE THIS WHEN YOU ARE DONE :)
+		int minValues = (Integer.parseInt(TFMinAddSubtract.getText())) * 60;
+		String dateValue = dpMinAddSubtract.getValue().toString();
+		
+		String format = "yyyy-MM-dd";
+
+		SimpleDateFormat df = new SimpleDateFormat(format);
+		Date date = null;
+		try {
+			date = df.parse(dateValue);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		int datePickerweek = cal.get(Calendar.WEEK_OF_YEAR);
+		int datePickerDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+		Calendar cal2 = Calendar.getInstance();
+		int currentWeek = cal2.get(Calendar.WEEK_OF_YEAR);
+		int currentDayOfWeek = cal2.get(Calendar.DAY_OF_WEEK);
+		
+		if(datePickerweek == currentWeek){
+			switch(dayOfWeek){
+			case 1:
+				pref.putInt(currentProjectName + oneWord, (pref.getInt(currentProjectName + oneWord, 0) + minValues));
+				break;
+			case 2:
+				pref.putInt(currentProjectName + twoWord, (pref.getInt(currentProjectName + twoWord, 0) + minValues));
+				break;
+			case 3:
+				pref.putInt(currentProjectName + threeWord, (pref.getInt(currentProjectName + threeWord, 0) + minValues));
+				break;
+			case 4:
+				pref.putInt(currentProjectName + fourWord, (pref.getInt(currentProjectName + fourWord, 0) + minValues));
+				break;
+			case 5:
+				pref.putInt(currentProjectName + fiveWord, (pref.getInt(currentProjectName + fiveWord, 0) + minValues));
+				break;
+			case 6:
+				pref.putInt(currentProjectName + sixWord, (pref.getInt(currentProjectName + sixWord, 0) + minValues));
+				break;
+			case 7:
+				pref.putInt(currentProjectName + sevenWord, (pref.getInt(currentProjectName + sevenWord, 0) + minValues));
+				break;
+			}
+			if(datePickerDayOfWeek == currentDayOfWeek){
+				recreatePieChart();
+				pref.putInt(currentProjectName, (pref.getInt(currentProjectName, 0) + minValues));
+			}
+			pref.putInt((currentProjectName + totalKeyWord), pref.getInt((currentProjectName + totalKeyWord), 0) + minValues);
+		}else{
+			pref.putInt((currentProjectName + totalKeyWord), pref.getInt((currentProjectName + totalKeyWord), 0) + minValues);
+		}
+		makeVisible(currentProjectName);
 	}
 
+	public void recreatePieChart(){
+		//Handles Pie Chart
+				ArrayList<PieChart.Data> pieChartDataNamesAndValues = new ArrayList<>();
+				String[] projectsList = pref.get(projectsPrefString, allPomorodoPrefString).split(commaKeyWord);
+				
+				for(int i = 0; i < projectsList.length; i++){
+					PieChart.Data data = null;
+					if(pref.get(currentProjectPrefString, allPomorodoPrefString).equals(projectsList[i])){
+						data = new PieChart.Data(projectsList[i], (((pref.getInt(projectsList[i], 0)) + (pref.getInt(currentTimePrefString, 0)))/60));	
+					}else{
+						data = new PieChart.Data(projectsList[i], (pref.getInt(projectsList[i], 0)/60));				
+					}
+					pieChartDataNamesAndValues.add(data);
+				}
+						
+				int minutesOfToday = 24 * 60;
+				int minutesUsedFromProjects = ((((pref.getInt(currentTimePrefString, 0)) + (pref.getInt(allPomorodoPrefString, 0)) + (pref.getInt(programmingPrefString, 0)) + (pref.getInt(homeworkPrefString, 0)) + (pref.getInt(workoutPrefString, 0)))/60));
+				int hoursNotUsing = minutesOfToday - minutesUsedFromProjects;
+				
+				PieChart.Data data = new PieChart.Data(pieChartsWastedTimeTitle, hoursNotUsing);
+				pieChartDataNamesAndValues.add(data);
+				
+				ObservableList<PieChart.Data> details = FXCollections.observableArrayList(pieChartDataNamesAndValues);
+				dailyActivities.setData(details);
+				dailyActivities.setTitle(pieChartsTitle);
+				dailyActivities.setLegendSide(Side.BOTTOM);
+	}
 	/**
 	 * returns it to the timer screen
 	 * @param e
