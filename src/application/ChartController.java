@@ -105,9 +105,9 @@ public class ChartController {
 	 */
 	public void initialize(){
 		
+		//this handles the slider
 		sbVBCenter.valueProperty().addListener(new ChangeListener<Number>() {
-			public void changed(ObservableValue<? extends Number> ov,
-				Number old_val, Number new_val) {
+			public void changed(ObservableValue<? extends Number> ov,Number old_val, Number new_val) {
 				bpChartAll.setLayoutY(-new_val.doubleValue()*5);
 			}
 		});
@@ -151,6 +151,7 @@ public class ChartController {
 		spinnerProject2.setValueFactory(valueFactory);
 		spinnerProject2.getStyleClass().add(spinnerProject2.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
 		spinnerProject2.valueProperty().addListener((obs, oldValue, newValue) -> makeVisible(newValue.toString()));
+		
 		
 		//Handles Line Chart
 		CategoryAxis xAxis = new CategoryAxis();
@@ -234,6 +235,8 @@ public class ChartController {
 	 */
 	private void makeVisible(String currentProjectName) {
 		
+		//resets the values of the textfield to zero
+		//TODO i dont know if i should keep this or not because some people will delete things
 		TFMinAddSubtract.setText("");
 		this.currentProjectName = currentProjectName;
 		
@@ -326,7 +329,12 @@ public class ChartController {
 	public void addSubtractMinutes(ActionEvent e){
 		
 		//TODO REMMEBER TO CLOSE THIS WHEN YOU ARE DONE :)
-		int minValues = (Integer.parseInt(TFMinAddSubtract.getText())) * 60;
+		int mintuesAddedOrSubtracted = 0;
+		try{
+			mintuesAddedOrSubtracted = (Integer.parseInt(TFMinAddSubtract.getText())) * 60;
+		}catch(NumberFormatException e1){
+			System.out.println("This is not a valid answer.");
+		}
 		String dateValue = dpMinAddSubtract.getValue().toString();
 		
 		String format = "yyyy-MM-dd";
@@ -351,38 +359,41 @@ public class ChartController {
 		if(datePickerweek == currentWeek){
 			switch(dayOfWeek){
 			case 1:
-				pref.putInt(currentProjectName + oneWord, (pref.getInt(currentProjectName + oneWord, 0) + minValues));
+				pref.putInt(currentProjectName + oneWord, (pref.getInt(currentProjectName + oneWord, 0) + mintuesAddedOrSubtracted));
 				break;
 			case 2:
-				pref.putInt(currentProjectName + twoWord, (pref.getInt(currentProjectName + twoWord, 0) + minValues));
+				pref.putInt(currentProjectName + twoWord, (pref.getInt(currentProjectName + twoWord, 0) + mintuesAddedOrSubtracted));
 				break;
 			case 3:
-				pref.putInt(currentProjectName + threeWord, (pref.getInt(currentProjectName + threeWord, 0) + minValues));
+				pref.putInt(currentProjectName + threeWord, (pref.getInt(currentProjectName + threeWord, 0) + mintuesAddedOrSubtracted));
 				break;
 			case 4:
-				pref.putInt(currentProjectName + fourWord, (pref.getInt(currentProjectName + fourWord, 0) + minValues));
+				pref.putInt(currentProjectName + fourWord, (pref.getInt(currentProjectName + fourWord, 0) + mintuesAddedOrSubtracted));
 				break;
 			case 5:
-				pref.putInt(currentProjectName + fiveWord, (pref.getInt(currentProjectName + fiveWord, 0) + minValues));
+				pref.putInt(currentProjectName + fiveWord, (pref.getInt(currentProjectName + fiveWord, 0) + mintuesAddedOrSubtracted));
 				break;
 			case 6:
-				pref.putInt(currentProjectName + sixWord, (pref.getInt(currentProjectName + sixWord, 0) + minValues));
+				pref.putInt(currentProjectName + sixWord, (pref.getInt(currentProjectName + sixWord, 0) + mintuesAddedOrSubtracted));
 				break;
 			case 7:
-				pref.putInt(currentProjectName + sevenWord, (pref.getInt(currentProjectName + sevenWord, 0) + minValues));
+				pref.putInt(currentProjectName + sevenWord, (pref.getInt(currentProjectName + sevenWord, 0) + mintuesAddedOrSubtracted));
 				break;
 			}
 			if(datePickerDayOfWeek == currentDayOfWeek){
 				recreatePieChart();
-				pref.putInt(currentProjectName, (pref.getInt(currentProjectName, 0) + minValues));
+				pref.putInt(currentProjectName, (pref.getInt(currentProjectName, 0) + mintuesAddedOrSubtracted));
 			}
-			pref.putInt((currentProjectName + totalKeyWord), pref.getInt((currentProjectName + totalKeyWord), 0) + minValues);
+			pref.putInt((currentProjectName + totalKeyWord), pref.getInt((currentProjectName + totalKeyWord), 0) + mintuesAddedOrSubtracted);
 		}else{
-			pref.putInt((currentProjectName + totalKeyWord), pref.getInt((currentProjectName + totalKeyWord), 0) + minValues);
+			pref.putInt((currentProjectName + totalKeyWord), pref.getInt((currentProjectName + totalKeyWord), 0) + mintuesAddedOrSubtracted);
 		}
 		makeVisible(currentProjectName);
 	}
 
+	/**
+	 * recreates the pie chart in order to present information 
+	 */
 	public void recreatePieChart(){
 		//Handles Pie Chart
 				ArrayList<PieChart.Data> pieChartDataNamesAndValues = new ArrayList<>();
@@ -412,7 +423,7 @@ public class ChartController {
 	}
 	/**
 	 * returns it to the timer screen
-	 * @param e
+	 * @param just passes to every button
 	 */
 	public void goBackToMainMenu(ActionEvent e){
 		Parent loader = null;
