@@ -29,11 +29,12 @@ public class SettingsController {
 	@FXML
 	CheckBox cbContiouseMode;
 	@FXML
-	ListView listView;
+	ListView<String> listView;
 	@FXML
 	TextField efAddProject;
 	
 	private Preferences pref;
+	
 	
 	//Preference names
 	private String continouseModePrefString = "continousMode";
@@ -43,7 +44,7 @@ public class SettingsController {
 	private String amountOfCyclesTillLongBreakPrefString = "amountOfCyclesTillLongBreak";
 	private String projectsPrefString = "projects";
 	private String allPomorodoPrefString = "All Pomorodo";
-	
+	private String totalTimeWorkingPrefString = "totalTimeWorking";
 	//Common Keywords
 	private String yesKeyWord = "Yes";
 	private String noKeyWord = "No";
@@ -51,11 +52,11 @@ public class SettingsController {
 	private String totalKeyWord = " Total";
 	private String spaceKeyWord = " ";
 	
+	
 	/**
 	 * This method will use the checkbox to set continous mode on or off
 	 */
 	public void cbCheckContinousMode(){
-		
 		if(cbContiouseMode.isSelected()){
 			pref.put(continouseModePrefString, yesKeyWord);
 		}else{
@@ -91,6 +92,7 @@ public class SettingsController {
 	public void initialize(){
 		
 		pref = Preferences.userRoot();
+		
 		tfLongBreakDuration.setPromptText(Integer.toString(pref.getInt(longBreakDurationPrefString, 10)));
 		tfShortBreakDuration.setPromptText(Integer.toString(pref.getInt(shortBreakDurationPrefString, 5)));
 		tfWorkDuration.setPromptText(Integer.toString(pref.getInt(workTimeDurationPrefString, 25)));
@@ -101,6 +103,7 @@ public class SettingsController {
 		}else{
 			cbContiouseMode.setSelected(false);
 		}
+		
 		String[] projectsList = pref.get(projectsPrefString, allPomorodoPrefString).split(commaKeyWord);
 		ObservableList<String> items =FXCollections.observableArrayList (projectsList);
 		listView.setItems(items);
@@ -110,16 +113,12 @@ public class SettingsController {
 	 * This will reset any project back to zero as if it didnt do anythings
 	 */
 	public void resetTask(){
-		if(listView.getSelectionModel().getSelectedIndex() != 0){
-			String resetProject = listView.getSelectionModel().getSelectedItem().toString();
-			//resets current values
-			pref.putInt(resetProject, 0); 
-			//resets total values
-			pref.putInt((resetProject + totalKeyWord), 0); 
-			//resets daily values
-			for(int i = 0; i < 7; i++){ 
-				pref.putInt((resetProject + spaceKeyWord + i), 0); 
-			}
+		String resetProject = listView.getSelectionModel().getSelectedItem().toString();
+			
+		pref.putInt(resetProject, 0); 
+		pref.putInt((resetProject + totalKeyWord), 0); 
+		for(int i = 0; i < 8; i++){ 
+			pref.putInt((resetProject + spaceKeyWord + i), 0); 
 		}
 	}
 	
@@ -127,13 +126,13 @@ public class SettingsController {
 	 * Will use selected word and delete it from the selection list
 	 */
 	public void deleteTask(){
-		
 		if(listView.getSelectionModel().getSelectedIndex() != 0){
 			String wordBeingDeleted = listView.getSelectionModel().getSelectedItem().toString();
+			
+			pref.putInt(totalTimeWorkingPrefString, (pref.getInt(totalTimeWorkingPrefString, 0) - pref.getInt(wordBeingDeleted + totalKeyWord, 0)));
 
 			String[] projectsList = pref.get(projectsPrefString, allPomorodoPrefString).split(commaKeyWord);
 			String[] newProjectsList = new String[projectsList.length - 1];
-
 			
 			int iterator = 0;
 			for(int i = 0; i < projectsList.length; i++){
@@ -152,9 +151,9 @@ public class SettingsController {
 				}
 			}
 			String wordsToString = words.toString();
-
 			pref.put(projectsPrefString, wordsToString);
 
+			
 			ObservableList<String> items =FXCollections.observableArrayList (newProjectsList);
 			listView.setItems(items);
 		}else{
@@ -162,12 +161,16 @@ public class SettingsController {
 		}
 		
 	}
+	
+	/**
+	 * Adds new projct
+	 */
 	public void addTask(){
-		//adds projects to current project string
+		//resets values in case it already exist in preferences
 		pref.put(projectsPrefString, (pref.get(projectsPrefString, allPomorodoPrefString) + commaKeyWord + efAddProject.getText()));
 		pref.putInt(efAddProject.getText(), 0);
 		pref.putInt((efAddProject.getText() + totalKeyWord), 0);
-		for(int i = 0; i < 7; i++){
+		for(int i = 0; i < 8; i++){
 			pref.putInt((efAddProject.getText() + spaceKeyWord + i), 0);
 		}
 		

@@ -1,14 +1,7 @@
 package application;
 
 import java.awt.Toolkit;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.prefs.Preferences;
 
 import javafx.animation.KeyFrame;
@@ -23,7 +16,7 @@ import javafx.util.Duration;
 
 public class TimeKeeper {
 
-	Toolkit toolkit;
+	private Toolkit toolkit;
 	
 	private int longBreakTimeDuration;
 	private int shortBreakTimeDuration;
@@ -37,16 +30,16 @@ public class TimeKeeper {
 	private int amountOfShortBreaksLeftTillLongBreakTracker = 3;
 
 	private String contiousMode;
-	private String project = "All Pomorodo";
+	private String currentProject = "All Pomorodo";
 	private boolean playing = false;
 	private boolean paused = false;
 	
-	Label lbTimer;
-	Button btnPlayAndPause;
-	HBox hboxTop;
-	HBox hboxCenter;
-	HBox hboxBottom;
-	Spinner spinnerProjects;
+	private Label lbTimer;
+	private Button btnPlayAndPause;
+	private HBox hboxTop;
+	private HBox hboxCenter;
+	private HBox hboxBottom;
+	private Spinner<String> spinnerProjects;
 
 	private Timeline longBreakTimeLine;
 	private Timeline shortBreakTimeLine;
@@ -58,7 +51,7 @@ public class TimeKeeper {
 	private String shortBreakDurationPrefString = "shortBreakDuration";
 	private String workTimeDurationPrefString = "workTimeDuration";
 	private String currentProjectPrefString = "currentProject";
-	private String currentTimePrefString = "currentTime";
+	private String overAllTimeCountedInCurrentProjectPrefString = "overAllTimeCountedInCurrentProject";
 	private String totalTimeWorkingPrefString = "totalTimeWorking";
 
 	private String resumeTimeBooleanPrefString = "resumeTimeBoolean";
@@ -79,11 +72,16 @@ public class TimeKeeper {
 	private String pauseColor = "-fx-background-color: #FFFF00";
 	
 	/**
-	 * This is teh constructor that lets you pass in values that we will be using
-	 * @param lbTimer the label we will be editing
-	 * @param contiousMode whether continouse mode is on or not
+	 * Initializes all the values when timer is created
+	 * @param lbTimer
+	 * @param contiousMode
+	 * @param hboxTop
+	 * @param hboxCenter
+	 * @param hboxBottom
+	 * @param spinnerProjects
+	 * @param btnPlayAndPause
 	 */
-	TimeKeeper(Label lbTimer, String contiousMode, HBox hboxTop, HBox hboxCenter, HBox hboxBottom, Spinner spinnerProjects, Button btnPlayAndPause){
+	TimeKeeper(Label lbTimer, String contiousMode, HBox hboxTop, HBox hboxCenter, HBox hboxBottom, Spinner<String> spinnerProjects, Button btnPlayAndPause){
 		this.btnPlayAndPause = btnPlayAndPause;
 		this.spinnerProjects = spinnerProjects;
 		this.hboxTop = hboxTop;
@@ -96,6 +94,22 @@ public class TimeKeeper {
 	}
 	
 	/**
+	 * This method sets the values incase the app is exited and come back
+	 */
+	private void setValues(){
+		pref = Preferences.userRoot();
+		
+		longBreakTimeDuration = (pref.getInt(longBreakDurationPrefString, 10) * 60);
+		shortBreakTimeDuration = (pref.getInt(shortBreakDurationPrefString, 5) * 60);
+		workTimeDuration = (pref.getInt(workTimeDurationPrefString, 25) * 60);
+		amountOfShortBreaksLeftTillLongBreak = pref.getInt(amountOfCyclesTillLongBreakPrefString, 3);
+		
+		timeCountDownTracker = workTimeDuration;
+		amountOfShortBreaksLeftTillLongBreakTracker = amountOfShortBreaksLeftTillLongBreak;
+	}
+	
+	//TODO RECHECK THIS
+	/**
 	 * This method will update the label
 	 * @param seconds
 	 */
@@ -103,7 +117,7 @@ public class TimeKeeper {
 		int minLeft = (seconds/60);
 		int secondsLeft = (seconds - (minLeft * 60));
 		if((seconds%60) == 0){
-			lbTimer.setText(minLeft + ":" + "00");
+			lbTimer.setText(minLeft + ":00");
 		}else if(seconds == 0){
 			lbTimer.setText("00:00");
 		}else if(secondsLeft < 10){
@@ -111,20 +125,7 @@ public class TimeKeeper {
 		}else{
 			lbTimer.setText(minLeft + ":" + secondsLeft);
 		}
-		pref.putInt(currentTimePrefString, overAllTimeCountedInCurrentProject);
-	}
-	
-	/**
-	 * This method sets the values incase the app is exited and come back
-	 */
-	private void setValues(){
-		pref = Preferences.userRoot();
-		longBreakTimeDuration = (pref.getInt(longBreakDurationPrefString, 10) * 60);
-		shortBreakTimeDuration = (pref.getInt(shortBreakDurationPrefString, 5) * 60);
-		workTimeDuration = (pref.getInt(workTimeDurationPrefString, 25) * 60);
-		amountOfShortBreaksLeftTillLongBreak = pref.getInt(amountOfCyclesTillLongBreakPrefString, 3);
-		timeCountDownTracker = workTimeDuration;
-		amountOfShortBreaksLeftTillLongBreakTracker = amountOfShortBreaksLeftTillLongBreak;
+		pref.putInt(overAllTimeCountedInCurrentProjectPrefString, overAllTimeCountedInCurrentProject);
 	}
 	
 	/**
@@ -133,6 +134,7 @@ public class TimeKeeper {
 	 */
 	public void playAndPause(){
 		if(playing == false){
+			//LongBreak
 			if(breakOrWorkTracker == 1){
 				if(amountOfShortBreaksLeftTillLongBreakTracker > 0){
 					
@@ -176,15 +178,13 @@ public class TimeKeeper {
 									btnPlayAndPause.setText(play);
 								}
 							}
-							
 						}
 					});
 					longBreakTimeLine.getKeyFrames().add(frame);
 					longBreakTimeLine.playFromStart();
+				//Short Break
 				}else{
-					
 					if(paused == false){
-
 						if(pref.getBoolean(resumePrefString, false) == false){
 							timeCountDownTracker = longBreakTimeDuration;
 						}else{
@@ -193,7 +193,7 @@ public class TimeKeeper {
 					}else{
 						paused = false;
 					}
-
+					
 					amountOfShortBreaksLeftTillLongBreakTracker = amountOfShortBreaksLeftTillLongBreak;
 					whichTimerPeriodIsPlaying = 2;
 					playing = true;
@@ -229,10 +229,9 @@ public class TimeKeeper {
 					shortBreakTimeLine.getKeyFrames().add(frame);
 					shortBreakTimeLine.playFromStart();
 				}
+			//Work 
 			}else{
-				
 				if(paused == false){
-
 					if(pref.getBoolean(resumePrefString, false) == false){
 						timeCountDownTracker = workTimeDuration;
 					}else{
@@ -241,12 +240,14 @@ public class TimeKeeper {
 				}else{
 					paused = true;
 				}
+				
 				whichTimerPeriodIsPlaying = 3;
 				playing = true;
 
 				workTimeLIne = new Timeline();
 				workTimeLIne.setCycleCount(Timeline.INDEFINITE);
 				KeyFrame frame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+					
 					@Override
 					public void handle(ActionEvent event) {
 						overAllTimeCountedInCurrentProject++;
@@ -272,7 +273,6 @@ public class TimeKeeper {
 		            	}
 					}
 				});
-				
 				workTimeLIne.getKeyFrames().add(frame);
 				workTimeLIne.playFromStart();
 			}
@@ -305,6 +305,7 @@ public class TimeKeeper {
 			}else{
 				workTimeLIne.stop();
 			}
+			
 			playing = false;
 			breakOrWorkTracker *= -1;
 			paused = false;
@@ -329,6 +330,7 @@ public class TimeKeeper {
 				overAllTimeCountedInCurrentProject = (overAllTimeCountedInCurrentProject - (workTimeDuration - timeCountDownTracker));
 				workTimeLIne.stop();
 			}
+			
 			playing = false;
 			paused = false;
 			playAndPause();
@@ -342,7 +344,7 @@ public class TimeKeeper {
 	 * @param newVAlue
 	 * @return
 	 */
-	public String hardReset(String newProjectName){
+	public void hardReset(String newProjectName){
 		Calendar cal = Calendar.getInstance();
 		
 		pref.put(currentProjectPrefString, newProjectName);
@@ -352,14 +354,16 @@ public class TimeKeeper {
 		hboxCenter.setStyle(pauseColor);
 		hboxTop.setStyle(pauseColor);
 
-		pref.putInt(project, (pref.getInt(project, 0) + overAllTimeCountedInCurrentProject));
-		pref.putInt((project + totalKeyWord), (pref.getInt(project, 0) + overAllTimeCountedInCurrentProject));
-		pref.putInt((project + spaceKeyWord + cal.get(Calendar.DAY_OF_WEEK)), (pref.getInt(project, 0) + overAllTimeCountedInCurrentProject));
+		//TODO SAVES VALUE FOR TIME SPENT
+		pref.putInt(currentProject, ((pref.getInt(currentProject, 0) + overAllTimeCountedInCurrentProject)));
+		pref.putInt((currentProject + totalKeyWord), (pref.getInt((currentProject + totalKeyWord), 0) + overAllTimeCountedInCurrentProject));
+		pref.putInt((currentProject + spaceKeyWord + cal.get(Calendar.DAY_OF_WEEK)), ((pref.getInt((currentProject + spaceKeyWord + cal.get(Calendar.DAY_OF_WEEK)), 0) + overAllTimeCountedInCurrentProject)));
 		
-		pref.putInt(totalTimeWorkingPrefString, (pref.getInt(totalTimeWorkingPrefString, 0) + overAllTimeCountedInCurrentProject));
+		pref.putInt(totalTimeWorkingPrefString, ((pref.getInt(totalTimeWorkingPrefString, 0) + overAllTimeCountedInCurrentProject)));
 
-		this.project = newProjectName;
+		currentProject = newProjectName;
 		
+		timeCountDownTracker = workTimeDuration;
 		overAllTimeCountedInCurrentProject = 0;
 		updateValues(workTimeDuration);
 		
@@ -374,11 +378,10 @@ public class TimeKeeper {
 			playing = false;
 			paused = false;
 		}
-		return newProjectName;
 	}
 	
 	/**
-	 * This class wills  stop the timer
+	 * This method will stop the timer
 	 * and save its current position
 	 */
 	public void stop(){
@@ -398,6 +401,7 @@ public class TimeKeeper {
 			}else{
 				workTimeLIne.stop();
 			}
+			
 			playing = false;
 			paused = false;
 		}else{
@@ -424,10 +428,10 @@ public class TimeKeeper {
 	 * @param seconds
 	 * @param workBreak
 	 */
-	public void resume(int seconds, int workBreak){
+	public void resume(int currentSecondsForTimer, int whichTimerPeriodIsPlaying){
 		pref.putBoolean(resumeTimeBooleanPrefString, false);
-		timeCountDownTracker = seconds;
-		whichTimerPeriodIsPlaying = workBreak;
+		timeCountDownTracker = currentSecondsForTimer;
+		this.whichTimerPeriodIsPlaying = whichTimerPeriodIsPlaying;
 		amountOfShortBreaksLeftTillLongBreakTracker = pref.getInt(lengthTillLongBreakTrackerPrefString, amountOfShortBreaksLeftTillLongBreakTracker);
 		breakOrWorkTracker = pref.getInt(resumebreakOrWorkPrefString, breakOrWorkTracker);
 		overAllTimeCountedInCurrentProject = pref.getInt(resumecurrentTimePrefString, overAllTimeCountedInCurrentProject);

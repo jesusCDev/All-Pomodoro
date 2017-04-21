@@ -45,29 +45,38 @@ public class Main extends Application {
 		Preferences pref = Preferences.userRoot();
 		Calendar cal = Calendar.getInstance();
 		
-		int currentTime = pref.getInt("currentTime", 0);
 		
-		String currentProjectPrefString = "CurrentProject";
+		String currentProjectPrefString = "currentProject";
 		String allPomorodoPrefString = "All Pomorodo";
-		String currentTimePrefString = "currentTime";
+		String currentTimePrefString = "overAllTimeCountedInCurrentProject";
 		String resumeWhichTimerIsPlayingPrefString = "resumeWhichTimerIsPlaying";
 		String totalTimeWorkingPrefString = "totalTimeWorking";
 		
 		String totalKeyWord = " Total";
 		String spaceKeyWord = " ";
 		
-		//This saves it for today
-		pref.putInt(pref.get(currentProjectPrefString, allPomorodoPrefString), (pref.getInt(pref.get(currentProjectPrefString, allPomorodoPrefString), 0) + currentTime));
-		//This saves it for the day of the week
-		pref.putInt((pref.get(currentProjectPrefString, allPomorodoPrefString) + spaceKeyWord + cal.get(Calendar.DAY_OF_WEEK)), (pref.getInt(pref.get(currentProjectPrefString, allPomorodoPrefString), 0) + currentTime));
-		//This saves it for the overall time
-		pref.putInt((pref.get(currentProjectPrefString, allPomorodoPrefString) + totalKeyWord), (pref.getInt(pref.get(currentProjectPrefString, allPomorodoPrefString), 0) + currentTime));
+		int currentTime = pref.getInt(currentTimePrefString, 0);
+
+		String projectsName = pref.get(currentProjectPrefString, allPomorodoPrefString);
+		String projectsDailyName = (pref.get(currentProjectPrefString, allPomorodoPrefString) + spaceKeyWord + cal.get(Calendar.DAY_OF_WEEK));
+		String projectsTotalName = (pref.get(currentProjectPrefString, allPomorodoPrefString) + totalKeyWord);
+
+		System.out.println("Current Tiem: " + currentTime);
+		System.out.println("Saving today: " + projectsName);
+		System.out.println("Saving daily: " + projectsDailyName);
+		System.out.println("Saving total: " + projectsTotalName);
+		
+		//TODO SAVES VALUES FOR TIME SPENT
+		pref.putInt(projectsName , (pref.getInt(projectsName , 0) + currentTime));
+		pref.putInt(projectsDailyName , (pref.getInt(projectsDailyName , 0) + currentTime));
+		pref.putInt(projectsTotalName , (pref.getInt(projectsTotalName, 0) + currentTime));
+		
+		pref.putInt(totalTimeWorkingPrefString, (pref.getInt(totalTimeWorkingPrefString, 0) + currentTime));
 		
 		//Changes the Current Project to All Pomorodo
 		pref.put(currentProjectPrefString, allPomorodoPrefString);
 		pref.putInt(currentTimePrefString, 0);
 		
 		pref.putInt(resumeWhichTimerIsPlayingPrefString, 3);
-		pref.putInt(totalTimeWorkingPrefString, (pref.getInt(totalTimeWorkingPrefString, 0) + currentTime));
 	}
 }
