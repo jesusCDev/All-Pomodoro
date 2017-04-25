@@ -239,18 +239,18 @@ public class ChartController {
 		//TODO i dont know if i should keep this or not because some people will delete things
 		TFMinAddSubtract.setText("");
 		this.currentProjectName = currentProjectName;
-		
+
 		weeklyActivites.getData().clear();
 		weeklyActivites.layout();
-		
+
 		//Handles Line Chart
 		CategoryAxis xAxis = new CategoryAxis();
 		NumberAxis yAxis = new NumberAxis();
 		xAxis.setLabel(daysWord);
-				
+
 		XYChart.Series series = new XYChart.Series();
 		series.setName(currentProjectName);
-		
+
 		int sunday = 0;
 		int monday = 0;
 		int tuesday = 0;
@@ -308,7 +308,7 @@ public class ChartController {
 		String projectNameThursday = (currentProjectName + fiveWord);
 		String projectNameFriday = (currentProjectName + sixWord);
 		String projectNameSaturday = (currentProjectName + sevenWord);
-		
+
 		series.getData().add(new XYChart.Data(sundayWord, (((pref.getInt(projectNameSunday, 0)) + sunday)/60)));
 		series.getData().add(new XYChart.Data(mondayWord, (((pref.getInt(projectNameMonday, 0)) + monday)/60)));
 		series.getData().add(new XYChart.Data(tuesdayWord, (((pref.getInt(projectNameTuesday, 0)) + tuesday)/60)));
@@ -316,7 +316,7 @@ public class ChartController {
 		series.getData().add(new XYChart.Data(thursdayWord, (((pref.getInt(projectNameThursday, 0)) + thursday)/60)));
 		series.getData().add(new XYChart.Data(fridayWord, (((pref.getInt(projectNameFriday, 0)) + friday)/60)));
 		series.getData().add(new XYChart.Data(saturdayWord, (((pref.getInt(projectNameSaturday, 0)) + saturday)/60)));
-		
+
 		weeklyActivites.getData().add(series);
 	}
 	
