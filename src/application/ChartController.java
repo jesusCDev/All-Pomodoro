@@ -108,6 +108,7 @@ public class ChartController {
 		//this handles the slider
 		sbVBCenter.valueProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> ov,Number old_val, Number new_val) {
+				System.out.println("ran");
 				bpChartAll.setLayoutY(-new_val.doubleValue()*5);
 			}
 		});
@@ -393,7 +394,7 @@ public class ChartController {
 
 	/**
 	 * recreates the pie chart in order to present information 
-	 */
+	 */ 
 	public void recreatePieChart(){
 		//Handles Pie Chart
 				ArrayList<PieChart.Data> pieChartDataNamesAndValues = new ArrayList<>();
@@ -421,6 +422,7 @@ public class ChartController {
 				dailyActivities.setTitle(pieChartsTitle);
 				dailyActivities.setLegendSide(Side.BOTTOM);
 	}
+	
 	/**
 	 * returns it to the timer screen
 	 * @param just passes to every button
