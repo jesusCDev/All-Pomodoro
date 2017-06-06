@@ -367,7 +367,7 @@ public class TimeKeeper {
 		overAllTimeCountedInCurrentProject = 0;
 		updateValues(workTimeDuration);
 		
-		if(playing == true || paused == true){
+		if(playing == true || paused == true){            
 			if(whichTimerPeriodIsPlaying == 1){
 				longBreakTimeLine.stop();
 			}else if(whichTimerPeriodIsPlaying == 2){

@@ -225,7 +225,7 @@ public class StartPomorodoController {
 		timer.stop();
 		Parent loader = null;
 		try {
-			loader = FXMLLoader.load(getClass().getResource("/fxml/Chart.fxml"));
+			loader = FXMLLoader.load(getClass().getResource("/fxml/Chart_One.fxml"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

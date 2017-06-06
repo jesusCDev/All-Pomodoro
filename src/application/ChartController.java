@@ -141,7 +141,7 @@ public class ChartController {
 		
 		ObservableList<PieChart.Data> details = FXCollections.observableArrayList(pieChartDataNamesAndValues);
 		dailyActivities.setData(details);
-		dailyActivities.setTitle(pieChartsTitle);
+		//dailyActivities.setTitle(pieChartsTitle);
 		dailyActivities.setLegendSide(Side.BOTTOM);
 
 		
@@ -301,7 +301,7 @@ public class ChartController {
 					break;
 			}
 		}
-
+		
 		String projectNameSunday = (currentProjectName + oneWord);
 		String projectNameMonday = (currentProjectName + twoWord);
 		String projectNameTuesday = (currentProjectName + threeWord);
