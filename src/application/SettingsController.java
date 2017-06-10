@@ -29,6 +29,8 @@ public class SettingsController {
 	@FXML
 	CheckBox cbContiouseMode;
 	@FXML
+	CheckBox cbHoverModeTrueOrFalse;
+	@FXML
 	ListView<String> listView;
 	@FXML
 	TextField efAddProject;
@@ -65,6 +67,17 @@ public class SettingsController {
 	}
 	
 	/**
+	 * This method will use the checkbox to set always on top mode on or off
+	 */
+	public void cbCheckHoverModeTrueOrFalse(){
+		if(cbHoverModeTrueOrFalse.isSelected()){
+			pref.putBoolean("AlwaysHoverTrueOrFalse", true);
+		}else{
+			pref.putBoolean("AlwaysHoverTrueOrFalse", false);
+		}
+	}
+	
+	/**
 	 * This method will allow the user to returen to the previous screen
 	 * by creating a new stage and scene
 	 * @param e
@@ -79,7 +92,7 @@ public class SettingsController {
 		Scene scene = new Scene(loader);
 		scene.getStylesheets().add(getClass().getResource("/style/startPomorodo.css").toExternalForm());
 		Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-		stage.setAlwaysOnTop(true);
+		stage.setAlwaysOnTop(pref.getBoolean("AlwaysHoverTrueOrFalse", true));
 		stage.setMinWidth(250.0);
 		stage.setMinHeight(200.0);
 		stage.setScene(scene);
@@ -97,11 +110,17 @@ public class SettingsController {
 		tfShortBreakDuration.setPromptText(Integer.toString(pref.getInt(shortBreakDurationPrefString, 5)));
 		tfWorkDuration.setPromptText(Integer.toString(pref.getInt(workTimeDurationPrefString, 25)));
 		tfAmountOfShotBreak.setPromptText(Integer.toString(pref.getInt(amountOfCyclesTillLongBreakPrefString, 3)));
-		
+
 		if(pref.get(continouseModePrefString, yesKeyWord).equals(yesKeyWord)){
 			cbContiouseMode.setSelected(true);
 		}else{
 			cbContiouseMode.setSelected(false);
+		}
+		
+		if(pref.getBoolean("AlwaysHoverTrueOrFalse", true) == true){
+			cbHoverModeTrueOrFalse.setSelected(true);
+		}else{
+			cbHoverModeTrueOrFalse.setSelected(false);
 		}
 		
 		String[] projectsList = pref.get(projectsPrefString, allPomorodoPrefString).split(commaKeyWord);

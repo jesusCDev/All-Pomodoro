@@ -134,7 +134,7 @@ public class TimeKeeper {
 	 */
 	public void playAndPause(){
 		if(playing == false){
-			//LongBreak
+			//ShortBreak
 			if(breakOrWorkTracker == 1){
 				if(amountOfShortBreaksLeftTillLongBreakTracker > 0){
 					
@@ -171,6 +171,7 @@ public class TimeKeeper {
 								if(contiousMode.equals(yesKeyWord)){
 									playAndPause();
 								}else{
+									System.out.println("Short Break Finished");
 									spinnerProjects.setDisable(false);
 									hboxBottom.setStyle(pauseColor);
 									hboxCenter.setStyle(pauseColor);
@@ -182,7 +183,7 @@ public class TimeKeeper {
 					});
 					longBreakTimeLine.getKeyFrames().add(frame);
 					longBreakTimeLine.playFromStart();
-				//Short Break
+				//Long Break
 				}else{
 					if(paused == false){
 						if(pref.getBoolean(resumePrefString, false) == false){
@@ -193,7 +194,6 @@ public class TimeKeeper {
 					}else{
 						paused = false;
 					}
-					
 					amountOfShortBreaksLeftTillLongBreakTracker = amountOfShortBreaksLeftTillLongBreak;
 					whichTimerPeriodIsPlaying = 2;
 					playing = true;
@@ -214,9 +214,12 @@ public class TimeKeeper {
 			            		breakOrWorkTracker *= -1;
 			            		toolkit.beep();
 			            		shortBreakTimeLine.stop();
+			            		//TODO HERE IS WHERE I WILL SAVE THE VALUES FOR THE DAY
+			            		
 								if(contiousMode.equals(yesKeyWord)){
 									playAndPause();
 								}else{
+									System.out.println("Long Break Finished");
 									spinnerProjects.setDisable(false);
 									hboxBottom.setStyle(pauseColor);
 									hboxCenter.setStyle(pauseColor);
@@ -264,6 +267,7 @@ public class TimeKeeper {
 							if(contiousMode.equals(yesKeyWord)){
 								playAndPause();
 							}else{
+								System.out.println("Work Finished");
 								spinnerProjects.setDisable(false);
 								hboxBottom.setStyle(pauseColor);
 								hboxCenter.setStyle(pauseColor);
@@ -354,7 +358,6 @@ public class TimeKeeper {
 		hboxCenter.setStyle(pauseColor);
 		hboxTop.setStyle(pauseColor);
 
-		//TODO SAVES VALUE FOR TIME SPENT
 		pref.putInt(currentProject, ((pref.getInt(currentProject, 0) + overAllTimeCountedInCurrentProject)));
 		pref.putInt((currentProject + totalKeyWord), (pref.getInt((currentProject + totalKeyWord), 0) + overAllTimeCountedInCurrentProject));
 		pref.putInt((currentProject + spaceKeyWord + cal.get(Calendar.DAY_OF_WEEK)), ((pref.getInt((currentProject + spaceKeyWord + cal.get(Calendar.DAY_OF_WEEK)), 0) + overAllTimeCountedInCurrentProject)));
@@ -409,6 +412,14 @@ public class TimeKeeper {
 		}
 	}
 	
+	/**
+	 * This method adds five mintues to the current work or break period
+	 * TODO we have to find a way to add the mintues to the work or break period it was just in
+	 */
+	public void addFiveMinutes(){
+		timeCountDownTracker += 5*60;
+		
+	}
 	/**
 	 * this will keep the time
 	 * this will keep which work or thing is

@@ -15,6 +15,7 @@
             <Button fx:id="btnRest" mnemonicParsing="false" onAction="#resetBtn" text="Reset" />
             <Button fx:id="btnPlayAndPause" mnemonicParsing="false" onAction="#playPauseBtn" text="Play" />
             <Button fx:id="btnNext" mnemonicParsing="false" onAction="#skipBtn" text="Next" />
+            <Button fx:id="btnAddFiveMin" mnemonicParsing="false" onAction="#addFiveMin" text="+5" />
          </children>
       </HBox>
    </bottom>

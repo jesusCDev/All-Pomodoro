@@ -309,7 +309,7 @@ public class ChartController {
 		String projectNameThursday = (currentProjectName + fiveWord);
 		String projectNameFriday = (currentProjectName + sixWord);
 		String projectNameSaturday = (currentProjectName + sevenWord);
-
+		
 		series.getData().add(new XYChart.Data(sundayWord, (((pref.getInt(projectNameSunday, 0)) + sunday)/60)));
 		series.getData().add(new XYChart.Data(mondayWord, (((pref.getInt(projectNameMonday, 0)) + monday)/60)));
 		series.getData().add(new XYChart.Data(tuesdayWord, (((pref.getInt(projectNameTuesday, 0)) + tuesday)/60)));
@@ -328,24 +328,23 @@ public class ChartController {
 	 * @param e
 	 */
 	public void addSubtractMinutes(ActionEvent e){
-		
-		//TODO REMMEBER TO CLOSE THIS WHEN YOU ARE DONE :)
+
+		//Getting mintues to add
 		int mintuesAddedOrSubtracted = 0;
 		try{
 			mintuesAddedOrSubtracted = (Integer.parseInt(TFMinAddSubtract.getText())) * 60;
 		}catch(NumberFormatException e1){
 			System.out.println("This is not a valid answer.");
 		}
-		String dateValue = dpMinAddSubtract.getValue().toString();
 		
-		String format = "yyyy-MM-dd";
-
-		SimpleDateFormat df = new SimpleDateFormat(format);
+		//Getting date from the day picker
+		String dateValue = dpMinAddSubtract.getValue().toString();
+		String dateValueFormat = "yyyy-MM-dd";
+		SimpleDateFormat df = new SimpleDateFormat(dateValueFormat);
 		Date date = null;
 		try {
 			date = df.parse(dateValue);
 		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -358,7 +357,7 @@ public class ChartController {
 		int currentDayOfWeek = cal2.get(Calendar.DAY_OF_WEEK);
 		
 		if(datePickerweek == currentWeek){
-			switch(dayOfWeek){
+			switch(datePickerDayOfWeek){
 			case 1:
 				pref.putInt(currentProjectName + oneWord, (pref.getInt(currentProjectName + oneWord, 0) + mintuesAddedOrSubtracted));
 				break;
@@ -437,7 +436,7 @@ public class ChartController {
 		Scene scene = new Scene(loader);
 		scene.getStylesheets().add(getClass().getResource("/style/startPomorodo.css").toExternalForm());
 		Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-		stage.setAlwaysOnTop(true);
+		stage.setAlwaysOnTop(pref.getBoolean("AlwaysHoverTrueOrFalse", true));
 		stage.setMinWidth(250.0);
 		stage.setMinHeight(200.0);
 		stage.setScene(scene);

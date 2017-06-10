@@ -94,32 +94,6 @@ public class StartPomorodoController {
 		
 		//will reset the information when you first start the application on a different day
 		if(!today.equals(pref.get(todaysDatePrefString, "Nope"))){
-
-			System.out.println("Reseted Values");
-			
-			//TODO Do i need this? as long as they dont work that day, they wont really be puttingg values so it will stay zero on its own
-		//WILL CHECK IF YOU MISSED A DAY AND SET THE VALUES TO ZERO FOR THE DAYS MISSED IN THE WEEK
-			//TODO I DONT THINK I WILL NEED THIS BECASUE AS LONG AS I DONT DO ANYTHING THAT DAY THEN THE VALUE SHOULD BE ZERO
-			//WILL BRING IT BACK IF I SEE THAT THIS KEEP A BUG AND SEE WHAT HAPPENS
-			/**
-			if(((cal.get(Calendar.DAY_OF_YEAR) - pref.getInt(lastTimeUsedDayOfYearPrefString, 0)) < 7) && (cal.get(Calendar.YEAR) == pref.getInt(lastTimeUsedYearPrefString, 0))){
-				for(int j = 0; j < projectsList.length; j++){
-					for(int i = ((cal.get(Calendar.DAY_OF_YEAR) - pref.getInt(lastTimeUsedDayOfYearPrefString, 0)) - 1); i > 0; i--){
-						pref.putInt((projectsList[j] + spaceKeyWord + (Calendar.DAY_OF_WEEK - i)), 0);
-					}
-				}
-			}
-			if(cal.get(Calendar.YEAR) != pref.getInt(lastTimeUsedYearPrefString, 0)){
-				if((365 - cal.get(Calendar.YEAR)) < 7){
-					for(int j = 0; j < projectsList.length; j++){
-						for(int i = ((cal.get(Calendar.DAY_OF_WEEK) - pref.getInt(lastTimeUsedDayOfWeekPrefString, 0)) - 1); i > 0; i--){
-							pref.putInt((projectsList[j] + spaceKeyWord + (Calendar.DAY_OF_WEEK - i)), 0);
-						}
-					}
-				}
-			}
-			**/
-		//WILL CHECK IF YOU MISSED A DAY AND SET THE VALUES TO ZERO FOR THE DAYS MISSED IN THE WEEK
 			
 			
 		//SECTION WILL FOCUS ON RESTING THE VALUES INCASE YOU ARE IN A NEW WEEK
@@ -295,6 +269,15 @@ public class StartPomorodoController {
 		timer.reset();
 	}
 	
+	/**
+	 * This method will add five min to the current work or break period
+	 * @param e
+	 */
+	@FXML
+	public void addFiveMin(ActionEvent e){
+		toolKit.beep();
+		timer.addFiveMinutes();
+	}
 	/**
 	 * This class will handle the window resizing
 	 */

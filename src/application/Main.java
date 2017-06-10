@@ -23,7 +23,10 @@ public class Main extends Application {
 			Parent root = FXMLLoader.load(getClass().getResource("/fxml/StartPomorodo.fxml"));
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("/style/startPomorodo.css").toExternalForm());
-			primaryStage.setAlwaysOnTop(true);
+			
+			Preferences pref = Preferences.userRoot();
+			
+			primaryStage.setAlwaysOnTop(pref.getBoolean("AlwaysHoverTrueOrFalse", true));
 			primaryStage.setMinWidth(250.0);
 			primaryStage.setMinHeight(200.0);
 			primaryStage.setScene(scene);
@@ -66,7 +69,6 @@ public class Main extends Application {
 		System.out.println("Saving daily: " + projectsDailyName);
 		System.out.println("Saving total: " + projectsTotalName);
 		
-		//TODO SAVES VALUES FOR TIME SPENT
 		pref.putInt(projectsName , (pref.getInt(projectsName , 0) + currentTime));
 		pref.putInt(projectsDailyName , (pref.getInt(projectsDailyName , 0) + currentTime));
 		pref.putInt(projectsTotalName , (pref.getInt(projectsTotalName, 0) + currentTime));
