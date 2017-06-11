@@ -10,6 +10,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -19,12 +20,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class StartPomorodoController {
 
+	@FXML
+	BorderPane borderPaneAll;
 	@FXML
 	Label lbTimer;
 	@FXML
@@ -223,7 +228,7 @@ public class StartPomorodoController {
 		String pauseColor = "-fx-background-color: #FFFF00";
 		
 		toolKit.beep();
-		SetWindowSize();
+		SetWindowSize(e);
 		
 		if(playPauseTracker == 1 || btnPlayAndPause.getText().equals(play)){
 			spinnerProjects.setDisable(true);
@@ -254,7 +259,6 @@ public class StartPomorodoController {
 	@FXML
 	public void skipBtn(ActionEvent e){
 		toolKit.beep();
-		SetWindowSize();
 		timer.skip();
 	}
 	
@@ -281,22 +285,63 @@ public class StartPomorodoController {
 	/**
 	 * This class will handle the window resizing
 	 */
-	public void SetWindowSize(){
+	public void SetWindowSize(ActionEvent e){
 		//Scene scene = ((Node) e.getSource()).getScene();
 		Scene scene = btnPlayAndPause.getScene();
 		scene.widthProperty().addListener(new ChangeListener<Number>() {
 		    @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
 		        System.out.println("Width: " + newSceneWidth);
+		        if(newSceneWidth.intValue() < 500){
+		        	borderPaneAll.setLayoutX((-1 * newSceneWidth.intValue())/2);
+		        }else{
+		        	borderPaneAll.setLayoutX(0);
+		        }
+		        
+		        if(newSceneWidth.intValue() > 200.0 && newSceneWidth.intValue() < 350){
+			        lbTimer.setFont(new Font("Verdana", (double) newSceneWidth - 150));
+		        }
 		    }
 		});
 		scene.heightProperty().addListener(new ChangeListener<Number>() {
 		    @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
 		        System.out.println("Height: " + newSceneHeight);
+		        if(newSceneHeight.intValue() < 400){
+		        	borderPaneAll.setLayoutY(( -1 * newSceneHeight.intValue())/2);
+		        }else{
+		        	borderPaneAll.setLayoutY(0);
+		        }
+		        
 		        if(newSceneHeight.intValue() > 200.0 && newSceneHeight.intValue() < 350){
-			        lbTimer.setFont(new Font("Cambria", (double) newSceneHeight - 150));
+			        lbTimer.setFont(new Font("Verdana", (double) newSceneHeight - 150));
 		        }
 		    }
 		});
+		
+
+		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			
+			/**
+			 * Handles the key events
+			 * TODO the plus sign doesnt do anything yet
+			 */
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCode()) {
+                    case PLUS:
+                    	addFiveMin(e);
+                    	break;
+                    case P:
+                    	playPauseBtn(e);
+                    	break;
+                    case R:
+                    	resetBtn(e);
+                   		break;
+                    case N:
+                    	skipBtn(e);
+                    	break;
+                }
+            }
+        });
 	}
 	
 }

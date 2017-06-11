@@ -21,6 +21,7 @@ public class TimeKeeper {
 	private int longBreakTimeDuration;
 	private int shortBreakTimeDuration;
 	private int workTimeDuration;
+	private int extraTimeDuration = 5 *60;
 	
 	private int timeCountDownTracker;
 	private	int breakOrWorkTracker = -1;
@@ -44,6 +45,7 @@ public class TimeKeeper {
 	private Timeline longBreakTimeLine;
 	private Timeline shortBreakTimeLine;
 	private Timeline workTimeLIne;
+	private Timeline extraTimeLine;
 	
 	private Preferences pref;
 	//Preference names
@@ -69,6 +71,8 @@ public class TimeKeeper {
 	private String totalKeyWord = " Total";
 
 	private String play = "Play";
+	private String pause = "Pause";
+	private String playColor = "-fx-background-color: #00E676";
 	private String pauseColor = "-fx-background-color: #FFFF00";
 	
 	/**
@@ -154,6 +158,7 @@ public class TimeKeeper {
 					longBreakTimeLine.setCycleCount(Timeline.INDEFINITE);
 					KeyFrame frame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
 						
+						//TODO CONTINOUS TIMER THREAD
 						@Override
 						public void handle(ActionEvent event) {
 							overAllTimeCountedInCurrentProject++;
@@ -287,8 +292,11 @@ public class TimeKeeper {
 			}else if(whichTimerPeriodIsPlaying == 2){
 				shortBreakTimeLine.pause();
 				paused = true;
-			}else{
+			}else if(whichTimerPeriodIsPlaying == 3){
 				workTimeLIne.pause();
+				paused = true;
+			} else { 
+				extraTimeLine.pause();
 				paused = true;
 			}
 			playing = false;
@@ -306,8 +314,10 @@ public class TimeKeeper {
 			}else if(whichTimerPeriodIsPlaying == 2){
 				shortBreakTimeLine.stop();
 				amountOfShortBreaksLeftTillLongBreakTracker = amountOfShortBreaksLeftTillLongBreak;
-			}else{
+			}else if(whichTimerPeriodIsPlaying == 3){
 				workTimeLIne.stop();
+			}else{
+				extraTimeLine.stop();
 			}
 			
 			playing = false;
@@ -330,9 +340,12 @@ public class TimeKeeper {
 			}else if(whichTimerPeriodIsPlaying == 2){
 				overAllTimeCountedInCurrentProject = (overAllTimeCountedInCurrentProject - (shortBreakTimeDuration - timeCountDownTracker));
 				shortBreakTimeLine.stop();
-			}else{
+			}else if(whichTimerPeriodIsPlaying == 3){
 				overAllTimeCountedInCurrentProject = (overAllTimeCountedInCurrentProject - (workTimeDuration - timeCountDownTracker));
 				workTimeLIne.stop();
+			}else{
+				overAllTimeCountedInCurrentProject = (overAllTimeCountedInCurrentProject - (extraTimeDuration - timeCountDownTracker));
+				extraTimeLine.stop();
 			}
 			
 			playing = false;
@@ -375,8 +388,10 @@ public class TimeKeeper {
 				longBreakTimeLine.stop();
 			}else if(whichTimerPeriodIsPlaying == 2){
 				shortBreakTimeLine.stop();
-			}else{
+			}else if(whichTimerPeriodIsPlaying == 3){
 				workTimeLIne.stop();
+			}else{
+				extraTimeLine.stop();
 			}
 			playing = false;
 			paused = false;
@@ -401,8 +416,10 @@ public class TimeKeeper {
 				longBreakTimeLine.stop();
 			}else if(whichTimerPeriodIsPlaying == 2){
 				shortBreakTimeLine.stop();
-			}else{
+			}else if(whichTimerPeriodIsPlaying == 3){
 				workTimeLIne.stop();
+			}else{
+				extraTimeLine.stop();
 			}
 			
 			playing = false;
@@ -418,6 +435,55 @@ public class TimeKeeper {
 	 */
 	public void addFiveMinutes(){
 		timeCountDownTracker += 5*60;
+		if(btnPlayAndPause.getText().equals(play)){
+			System.out.println("Extra Start");
+			spinnerProjects.setDisable(true);
+			hboxBottom.setStyle(playColor);
+			hboxCenter.setStyle(playColor);
+			hboxTop.setStyle(playColor);
+			btnPlayAndPause.setText(pause);
+			if(paused == false){
+				if(pref.getBoolean(resumePrefString, false) == false){
+					timeCountDownTracker = extraTimeDuration;
+				}else{
+					pref.putBoolean(resumePrefString, false);
+				}
+			}else{
+				paused = true;
+			}
+			whichTimerPeriodIsPlaying = 4;
+			playing = true;
+			extraTimeLine = new Timeline();
+			extraTimeLine.setCycleCount(Timeline.INDEFINITE);
+			KeyFrame frame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					overAllTimeCountedInCurrentProject++;
+	            	if(timeCountDownTracker > 0){
+						updateValues(timeCountDownTracker);
+	            		System.out.println(timeCountDownTracker);
+	            		timeCountDownTracker--;
+	            	}else{
+						updateValues(timeCountDownTracker);
+	            		playing = false;
+	            		toolkit.beep();
+	            		extraTimeLine.stop();
+						if(contiousMode.equals(yesKeyWord)){
+							playAndPause();
+						}else{
+							System.out.println("Work Finished");
+							spinnerProjects.setDisable(false);
+							hboxBottom.setStyle(pauseColor);
+							hboxCenter.setStyle(pauseColor);
+							hboxTop.setStyle(pauseColor);
+							btnPlayAndPause.setText(play);
+						}
+	            	}
+				}
+			});
+			extraTimeLine.getKeyFrames().add(frame);
+			extraTimeLine.playFromStart();
+		}
 		
 	}
 	/**

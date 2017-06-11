@@ -37,6 +37,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -54,6 +55,8 @@ public class ChartController {
 	Label todayMin;
 	@FXML
 	BorderPane bpChartAll;
+	@FXML
+	HBox hboxAll;
 	@FXML
 	ScrollBar sbVBCenter;
 	@FXML
@@ -105,11 +108,11 @@ public class ChartController {
 	 */
 	public void initialize(){
 		
-		//this handles the slider
+		//this handles the scrollbar
 		sbVBCenter.valueProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> ov,Number old_val, Number new_val) {
 				System.out.println("ran");
-				bpChartAll.setLayoutY(-new_val.doubleValue()*5);
+				hboxAll.setLayoutY(-new_val.doubleValue()*5);
 			}
 		});
 		pref = Preferences.userRoot();

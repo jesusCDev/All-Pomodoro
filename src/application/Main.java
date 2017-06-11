@@ -59,15 +59,13 @@ public class Main extends Application {
 		String spaceKeyWord = " ";
 		
 		int currentTime = pref.getInt(currentTimePrefString, 0);
+		System.out.println("Current Time Being Saved: " + currentTime);
 
 		String projectsName = pref.get(currentProjectPrefString, allPomorodoPrefString);
 		String projectsDailyName = (pref.get(currentProjectPrefString, allPomorodoPrefString) + spaceKeyWord + cal.get(Calendar.DAY_OF_WEEK));
 		String projectsTotalName = (pref.get(currentProjectPrefString, allPomorodoPrefString) + totalKeyWord);
 
-		System.out.println("Current Tiem: " + currentTime);
-		System.out.println("Saving today: " + projectsName);
-		System.out.println("Saving daily: " + projectsDailyName);
-		System.out.println("Saving total: " + projectsTotalName);
+		System.out.println("Current Tiem: " + currentTime/60);
 		
 		pref.putInt(projectsName , (pref.getInt(projectsName , 0) + currentTime));
 		pref.putInt(projectsDailyName , (pref.getInt(projectsDailyName , 0) + currentTime));
