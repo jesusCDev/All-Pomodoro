@@ -48,7 +48,6 @@ public class Main extends Application {
 		Preferences pref = Preferences.userRoot();
 		Calendar cal = Calendar.getInstance();
 		
-		
 		String currentProjectPrefString = "currentProject";
 		String allPomorodoPrefString = "All Pomorodo";
 		String currentTimePrefString = "overAllTimeCountedInCurrentProject";
@@ -59,7 +58,6 @@ public class Main extends Application {
 		String spaceKeyWord = " ";
 		
 		int currentTime = pref.getInt(currentTimePrefString, 0);
-		System.out.println("Current Time Being Saved: " + currentTime);
 
 		String projectsName = pref.get(currentProjectPrefString, allPomorodoPrefString);
 		String projectsDailyName = (pref.get(currentProjectPrefString, allPomorodoPrefString) + spaceKeyWord + cal.get(Calendar.DAY_OF_WEEK));

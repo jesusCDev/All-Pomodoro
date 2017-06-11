@@ -283,11 +283,16 @@ public class StartPomorodoController {
 		timer.addFiveMinutes();
 	}
 	/**
-	 * This class will handle the window resizing
+	 * This will reset the numbers and move the borderpane in order to keep the numbers in the middle
 	 */
 	public void SetWindowSize(ActionEvent e){
 		//Scene scene = ((Node) e.getSource()).getScene();
 		Scene scene = btnPlayAndPause.getScene();
+		
+		//TODO we should try to make an algerithm where instead of moving right away it does it into a slower transition
+		//TODO also we should find a way to better center it (the numbers are in the middle so transitioning should be easier
+
+		//Handles the height by changing the size of the font, and also changing the position of the hbox so it stays centered
 		scene.widthProperty().addListener(new ChangeListener<Number>() {
 		    @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
 		        System.out.println("Width: " + newSceneWidth);
@@ -297,11 +302,15 @@ public class StartPomorodoController {
 		        	borderPaneAll.setLayoutX(0);
 		        }
 		        
+		        /**
 		        if(newSceneWidth.intValue() > 200.0 && newSceneWidth.intValue() < 350){
 			        lbTimer.setFont(new Font("Verdana", (double) newSceneWidth - 150));
 		        }
+		        **/
 		    }
 		});
+		
+		//Handles the height by changing the size of the font, and also changing the position of the hbox so it stays centered
 		scene.heightProperty().addListener(new ChangeListener<Number>() {
 		    @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
 		        System.out.println("Height: " + newSceneHeight);
@@ -327,7 +336,10 @@ public class StartPomorodoController {
             @Override
             public void handle(KeyEvent event) {
                 switch (event.getCode()) {
-                    case PLUS:
+                    case DIGIT5:
+                    	addFiveMin(e);
+                    	break;
+                    case NUMPAD5:
                     	addFiveMin(e);
                     	break;
                     case P:
