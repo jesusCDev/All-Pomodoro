@@ -46,6 +46,9 @@ public class StartPomorodoController {
 	private int playPauseTracker = 1;
 	private TimeKeeper timer;
 	private Toolkit toolKit;
+
+	int width = 600;
+	int height = 400;
 	
 	/**
 	 * set values of timer
@@ -296,8 +299,9 @@ public class StartPomorodoController {
 		scene.widthProperty().addListener(new ChangeListener<Number>() {
 		    @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
 		        System.out.println("Width: " + newSceneWidth);
+		        width = newSceneWidth.intValue();
 		        if(newSceneWidth.intValue() < 500){
-		        	borderPaneAll.setLayoutX((-1 * newSceneWidth.intValue())/2);
+		        	borderPaneAll.setLayoutX((-1 * (600 - newSceneWidth.intValue()))/2);
 		        }else{
 		        	borderPaneAll.setLayoutX(0);
 		        }
@@ -314,15 +318,23 @@ public class StartPomorodoController {
 		scene.heightProperty().addListener(new ChangeListener<Number>() {
 		    @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
 		        System.out.println("Height: " + newSceneHeight);
+		        height = newSceneHeight.intValue();
 		        if(newSceneHeight.intValue() < 400){
 		        	borderPaneAll.setLayoutY(( -1 * newSceneHeight.intValue())/2);
+		        	//borderPaneAll.setLayoutY((-1 * (600 - newSceneHeight.intValue()))/2);
 		        }else{
 		        	borderPaneAll.setLayoutY(0);
 		        }
 		        
+		        int timerWidth = (int)lbTimer.getWidth();
+		        if(timerWidth > width){
+			        lbTimer.setFont(new Font("Verdana", (double) newSceneHeight - 150));
+		        }
+		        /**
 		        if(newSceneHeight.intValue() > 200.0 && newSceneHeight.intValue() < 350){
 			        lbTimer.setFont(new Font("Verdana", (double) newSceneHeight - 150));
 		        }
+		        **/
 		    }
 		});
 		
