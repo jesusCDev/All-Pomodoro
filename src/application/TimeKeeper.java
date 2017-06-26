@@ -24,9 +24,9 @@ public class TimeKeeper {
 	private int extraTimeDuration = 5 *60;
 	
 	private int timeCountDownTracker;
-	private	int breakOrWorkTracker = -1;
+	private	int breakOrWorkTracker = 1;
 	private int overAllTimeCountedInCurrentProject = 0;
-	private int whichTimerPeriodIsPlaying = 0;
+	private int whichTimerPeriodIsPlaying = 3;
 	private int amountOfShortBreaksLeftTillLongBreak = 3;
 	private int amountOfShortBreaksLeftTillLongBreakTracker = 3;
 
@@ -42,9 +42,7 @@ public class TimeKeeper {
 	private HBox hboxBottom;
 	private Spinner<String> spinnerProjects;
 
-	private Timeline longBreakTimeLine;
-	private Timeline shortBreakTimeLine;
-	private Timeline workTimeLIne;
+	private Timeline timer;
 	private Timeline extraTimeLine;
 	
 	private Preferences pref;
@@ -139,183 +137,82 @@ public class TimeKeeper {
 	 * @param btnPlayAndPause
 	 */
 	public void playAndPause(){
+		
 		if(playing == false){
-			//ShortBreak
-			if(breakOrWorkTracker == 1){
-				if(amountOfShortBreaksLeftTillLongBreakTracker > 0){
+			
+			if(paused == false){
+				if(pref.getBoolean(resumePrefString, false) == false){
 					
-					if(paused == false){
-						if(pref.getBoolean(resumePrefString, false) == false){
-							timeCountDownTracker = shortBreakTimeDuration;
-						}else{
-							pref.putBoolean(resumePrefString, false);
-						}
-					}else{
-						paused = false;
+					int timeDuration;
+					
+					if(whichTimerPeriodIsPlaying == 1){
+						timeDuration = 	longBreakTimeDuration;
+					}else if(whichTimerPeriodIsPlaying == 2){
+						timeDuration = 	shortBreakTimeDuration;
+					}else {
+						timeDuration = 	workTimeDuration;
 					}
-
-					whichTimerPeriodIsPlaying = 1;
-					playing = true;
-					longBreakTimeLine = new Timeline();
-					longBreakTimeLine.setCycleCount(Timeline.INDEFINITE);
-					KeyFrame frame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
-						
-						//TODO CONTINOUS TIMER THREAD
-						@Override
-						public void handle(ActionEvent event) {
-							overAllTimeCountedInCurrentProject++;
-							if(timeCountDownTracker > 0){
-								updateValues(timeCountDownTracker);
-								System.out.println(timeCountDownTracker);
-								timeCountDownTracker--;
-							}else{
-								updateValues(timeCountDownTracker);
-			            		playing = false;
-			            		breakOrWorkTracker *= -1;
-			            		amountOfShortBreaksLeftTillLongBreakTracker--;
-								toolkit.beep();
-								longBreakTimeLine.stop();
-								if(contiousMode.equals(yesKeyWord)){
-									playAndPause();
-								}else{
-									System.out.println("Short Break Finished");
-									spinnerProjects.setDisable(false);
-									hboxBottom.setStyle(pauseColor);
-									hboxCenter.setStyle(pauseColor);
-									hboxTop.setStyle(pauseColor);
-									btnPlayAndPause.setText(play);
-								}
-							}
-						}
-					});
-					longBreakTimeLine.getKeyFrames().add(frame);
-					longBreakTimeLine.playFromStart();
-				//Long Break
+					
+					timeCountDownTracker = timeDuration;
 				}else{
-					if(paused == false){
-						if(pref.getBoolean(resumePrefString, false) == false){
-							timeCountDownTracker = longBreakTimeDuration;
-						}else{
-							pref.putBoolean(resumePrefString, false);
-						}
-					}else{
-						paused = false;
-					}
-					amountOfShortBreaksLeftTillLongBreakTracker = amountOfShortBreaksLeftTillLongBreak;
-					whichTimerPeriodIsPlaying = 2;
-					playing = true;
-					shortBreakTimeLine = new Timeline();
-					shortBreakTimeLine.setCycleCount(Timeline.INDEFINITE);
-					KeyFrame frame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
-						
-						@Override
-						public void handle(ActionEvent event) {
-							overAllTimeCountedInCurrentProject++;
-			            	if(timeCountDownTracker > 0){
-								updateValues(timeCountDownTracker);
-			            		System.out.println(timeCountDownTracker);
-			            		timeCountDownTracker--;
-			            	}else{
-								updateValues(timeCountDownTracker);
-			            		playing = false;
-			            		breakOrWorkTracker *= -1;
-			            		toolkit.beep();
-			            		shortBreakTimeLine.stop();
-			            		//TODO HERE IS WHERE I WILL SAVE THE VALUES FOR THE DAY
-
-
-			            		Calendar cal = Calendar.getInstance();
-			            		
-			            		//saves the values for the current day
-			            		String projectsName = pref.get(currentProjectPrefString, allPomorodoPrefString);
-			            		String projectsDailyName = (pref.get(currentProjectPrefString, allPomorodoPrefString) + spaceKeyWord + cal.get(Calendar.DAY_OF_WEEK));
-			            		String projectsTotalName = (pref.get(currentProjectPrefString, allPomorodoPrefString) + totalKeyWord);
-
-			            		pref.putInt(projectsName , (pref.getInt(projectsName , 0) + overAllTimeCountedInCurrentProject));
-			            		pref.putInt(projectsDailyName , (pref.getInt(projectsDailyName , 0) + overAllTimeCountedInCurrentProject));
-			            		pref.putInt(projectsTotalName , (pref.getInt(projectsTotalName, 0) + overAllTimeCountedInCurrentProject));
-			            		pref.putInt(totalTimeWorkingPrefString, (pref.getInt(totalTimeWorkingPrefString, 0) + overAllTimeCountedInCurrentProject));
-			            		overAllTimeCountedInCurrentProject = 0;
-			            		
-			            		
-								if(contiousMode.equals(yesKeyWord)){
-									playAndPause();
-								}else{
-									System.out.println("Long Break Finished");
-									spinnerProjects.setDisable(false);
-									hboxBottom.setStyle(pauseColor);
-									hboxCenter.setStyle(pauseColor);
-									hboxTop.setStyle(pauseColor);
-									btnPlayAndPause.setText(play);
-								}
-			            	}
-						}
-					});
-					shortBreakTimeLine.getKeyFrames().add(frame);
-					shortBreakTimeLine.playFromStart();
+					pref.putBoolean(resumePrefString, false);
 				}
-			//Work 
 			}else{
-				if(paused == false){
-					if(pref.getBoolean(resumePrefString, false) == false){
-						timeCountDownTracker = workTimeDuration;
-					}else{
-						pref.putBoolean(resumePrefString, false);
-					}
-				}else{
-					paused = true;
-				}
+				paused = false;
+			}
+			
+			playing = true;
+			timer = new Timeline();
+			timer.setCycleCount(Timeline.INDEFINITE);
+			KeyFrame frame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
 				
-				whichTimerPeriodIsPlaying = 3;
-				playing = true;
-
-				workTimeLIne = new Timeline();
-				workTimeLIne.setCycleCount(Timeline.INDEFINITE);
-				KeyFrame frame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
-					
-					@Override
-					public void handle(ActionEvent event) {
-						overAllTimeCountedInCurrentProject++;
-		            	if(timeCountDownTracker > 0){
-							updateValues(timeCountDownTracker);
-		            		System.out.println(timeCountDownTracker);
-		            		timeCountDownTracker--;
-		            	}else{
-							updateValues(timeCountDownTracker);
-		            		playing = false;
-		            		breakOrWorkTracker *= -1;
-		            		toolkit.beep();
-		            		workTimeLIne.stop();
-							if(contiousMode.equals(yesKeyWord)){
-								playAndPause();
-							}else{
-								System.out.println("Work Finished");
-								spinnerProjects.setDisable(false);
-								hboxBottom.setStyle(pauseColor);
-								hboxCenter.setStyle(pauseColor);
-								hboxTop.setStyle(pauseColor);
-								btnPlayAndPause.setText(play);
-							}
-		            	}
+				//TODO CONTINOUS TIMER THREAD
+				@Override
+				public void handle(ActionEvent event) {
+					overAllTimeCountedInCurrentProject++;
+					if(timeCountDownTracker > 0){
+						updateValues(timeCountDownTracker);
+						timeCountDownTracker--;
+						System.out.println(timeCountDownTracker);
+					}else{
+						updateValues(timeCountDownTracker);
+	            		playing = false;
+	            		
+	            		//use these to figure it out
+	            		breakOrWorkTracker *= -1;
+	            		
+	            		if(breakOrWorkTracker == -1){
+	            			amountOfShortBreaksLeftTillLongBreakTracker--;
+	            			whichTimerPeriodIsPlaying = 1;
+	            			if(amountOfShortBreaksLeftTillLongBreakTracker < 0){
+		            			amountOfShortBreaksLeftTillLongBreakTracker = amountOfShortBreaksLeftTillLongBreak;
+		            			whichTimerPeriodIsPlaying = 2;
+		            		}
+	            		}else{
+	            			whichTimerPeriodIsPlaying = 3;
+	            		}
+	            		
+						toolkit.beep();
+						timer.stop();
+						if(contiousMode.equals(yesKeyWord)){
+							playAndPause();
+						}else{
+							System.out.println("Timer Finished");
+							spinnerProjects.setDisable(false);
+							hboxBottom.setStyle(pauseColor);
+							hboxCenter.setStyle(pauseColor);
+							hboxTop.setStyle(pauseColor);
+							btnPlayAndPause.setText(play);
+						}
 					}
-				});
-				workTimeLIne.getKeyFrames().add(frame);
-				workTimeLIne.playFromStart();
-			}
+				}
+			});
+			timer.getKeyFrames().add(frame);
+			timer.playFromStart();
+			
 		}else{
-			if(whichTimerPeriodIsPlaying == 1){
-				longBreakTimeLine.pause();
-				paused = true;
-			}else if(whichTimerPeriodIsPlaying == 2){
-				shortBreakTimeLine.pause();
-				paused = true;
-			}else if(whichTimerPeriodIsPlaying == 3){
-				workTimeLIne.pause();
-				paused = true;
-			} else { 
-				extraTimeLine.pause();
-				paused = true;
-			}
+			timer.pause();
+			paused = true;
 			playing = false;
 		}
 	}
@@ -325,20 +222,23 @@ public class TimeKeeper {
 	 */
 	public void skip(){
 		if(playing == true || paused == true){
-			if(whichTimerPeriodIsPlaying == 1){
-				longBreakTimeLine.stop();
-				amountOfShortBreaksLeftTillLongBreakTracker--;
-			}else if(whichTimerPeriodIsPlaying == 2){
-				shortBreakTimeLine.stop();
-				amountOfShortBreaksLeftTillLongBreakTracker = amountOfShortBreaksLeftTillLongBreak;
-			}else if(whichTimerPeriodIsPlaying == 3){
-				workTimeLIne.stop();
-			}else{
-				extraTimeLine.stop();
-			}
+			timer.stop();
+			
+			breakOrWorkTracker *= -1;
+			
+			if(breakOrWorkTracker == -1){
+    			amountOfShortBreaksLeftTillLongBreakTracker--;
+    			whichTimerPeriodIsPlaying = 1;
+
+    			if(amountOfShortBreaksLeftTillLongBreakTracker < 0){
+        			amountOfShortBreaksLeftTillLongBreakTracker = amountOfShortBreaksLeftTillLongBreak;
+        			whichTimerPeriodIsPlaying = 2;
+        		}
+    		}else{
+    			whichTimerPeriodIsPlaying = 3;
+    		}
 			
 			playing = false;
-			breakOrWorkTracker *= -1;
 			paused = false;
 			playAndPause();
 		}else{
@@ -351,20 +251,18 @@ public class TimeKeeper {
 	 */
 	public void reset(){
 		if(playing == true || paused == true){
+			
+			int timeDuration;
 			if(whichTimerPeriodIsPlaying == 1){
-				overAllTimeCountedInCurrentProject = (overAllTimeCountedInCurrentProject - (longBreakTimeDuration - timeCountDownTracker));
-				longBreakTimeLine.stop();
+				timeDuration = 	longBreakTimeDuration;
 			}else if(whichTimerPeriodIsPlaying == 2){
-				overAllTimeCountedInCurrentProject = (overAllTimeCountedInCurrentProject - (shortBreakTimeDuration - timeCountDownTracker));
-				shortBreakTimeLine.stop();
-			}else if(whichTimerPeriodIsPlaying == 3){
-				overAllTimeCountedInCurrentProject = (overAllTimeCountedInCurrentProject - (workTimeDuration - timeCountDownTracker));
-				workTimeLIne.stop();
-			}else{
-				overAllTimeCountedInCurrentProject = (overAllTimeCountedInCurrentProject - (extraTimeDuration - timeCountDownTracker));
-				extraTimeLine.stop();
+				timeDuration = 	shortBreakTimeDuration;
+			}else {
+				timeDuration = 	workTimeDuration;
 			}
 			
+			overAllTimeCountedInCurrentProject = (overAllTimeCountedInCurrentProject - (timeDuration - timeCountDownTracker));
+			timer.stop();
 			playing = false;
 			paused = false;
 			playAndPause();
@@ -400,16 +298,8 @@ public class TimeKeeper {
 		overAllTimeCountedInCurrentProject = 0;
 		updateValues(workTimeDuration);
 		
-		if(playing == true || paused == true){            
-			if(whichTimerPeriodIsPlaying == 1){
-				longBreakTimeLine.stop();
-			}else if(whichTimerPeriodIsPlaying == 2){
-				shortBreakTimeLine.stop();
-			}else if(whichTimerPeriodIsPlaying == 3){
-				workTimeLIne.stop();
-			}else{
-				extraTimeLine.stop();
-			}
+		if(playing == true || paused == true){       
+			timer.stop();
 			playing = false;
 			paused = false;
 		}
@@ -429,15 +319,7 @@ public class TimeKeeper {
 		pref.putBoolean(resumePrefString, true);
 		
 		if(playing == true || paused == true){
-			if(whichTimerPeriodIsPlaying == 1){
-				longBreakTimeLine.stop();
-			}else if(whichTimerPeriodIsPlaying == 2){
-				shortBreakTimeLine.stop();
-			}else if(whichTimerPeriodIsPlaying == 3){
-				workTimeLIne.stop();
-			}else{
-				extraTimeLine.stop();
-			}
+			timer.stop();
 			
 			playing = false;
 			paused = false;
