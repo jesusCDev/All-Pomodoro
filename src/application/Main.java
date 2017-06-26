@@ -68,7 +68,6 @@ public class Main extends Application {
 		pref.putInt(projectsName , (pref.getInt(projectsName , 0) + currentTime));
 		pref.putInt(projectsDailyName , (pref.getInt(projectsDailyName , 0) + currentTime));
 		pref.putInt(projectsTotalName , (pref.getInt(projectsTotalName, 0) + currentTime));
-		
 		pref.putInt(totalTimeWorkingPrefString, (pref.getInt(totalTimeWorkingPrefString, 0) + currentTime));
 		
 		//Changes the Current Project to All Pomorodo

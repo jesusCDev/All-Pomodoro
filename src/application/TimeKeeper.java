@@ -53,6 +53,8 @@ public class TimeKeeper {
 	private String shortBreakDurationPrefString = "shortBreakDuration";
 	private String workTimeDurationPrefString = "workTimeDuration";
 	private String currentProjectPrefString = "currentProject";
+
+	private String allPomorodoPrefString = "All Pomorodo";
 	private String overAllTimeCountedInCurrentProjectPrefString = "overAllTimeCountedInCurrentProject";
 	private String totalTimeWorkingPrefString = "totalTimeWorking";
 
@@ -220,6 +222,21 @@ public class TimeKeeper {
 			            		toolkit.beep();
 			            		shortBreakTimeLine.stop();
 			            		//TODO HERE IS WHERE I WILL SAVE THE VALUES FOR THE DAY
+
+
+			            		Calendar cal = Calendar.getInstance();
+			            		
+			            		//saves the values for the current day
+			            		String projectsName = pref.get(currentProjectPrefString, allPomorodoPrefString);
+			            		String projectsDailyName = (pref.get(currentProjectPrefString, allPomorodoPrefString) + spaceKeyWord + cal.get(Calendar.DAY_OF_WEEK));
+			            		String projectsTotalName = (pref.get(currentProjectPrefString, allPomorodoPrefString) + totalKeyWord);
+
+			            		pref.putInt(projectsName , (pref.getInt(projectsName , 0) + overAllTimeCountedInCurrentProject));
+			            		pref.putInt(projectsDailyName , (pref.getInt(projectsDailyName , 0) + overAllTimeCountedInCurrentProject));
+			            		pref.putInt(projectsTotalName , (pref.getInt(projectsTotalName, 0) + overAllTimeCountedInCurrentProject));
+			            		pref.putInt(totalTimeWorkingPrefString, (pref.getInt(totalTimeWorkingPrefString, 0) + overAllTimeCountedInCurrentProject));
+			            		overAllTimeCountedInCurrentProject = 0;
+			            		
 			            		
 								if(contiousMode.equals(yesKeyWord)){
 									playAndPause();

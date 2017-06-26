@@ -292,9 +292,6 @@ public class StartPomorodoController {
 		//Scene scene = ((Node) e.getSource()).getScene();
 		Scene scene = btnPlayAndPause.getScene();
 		
-		//TODO we should try to make an algerithm where instead of moving right away it does it into a slower transition
-		//TODO also we should find a way to better center it (the numbers are in the middle so transitioning should be easier
-
 		//Handles the height by changing the size of the font, and also changing the position of the hbox so it stays centered
 		scene.widthProperty().addListener(new ChangeListener<Number>() {
 		    @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
@@ -305,12 +302,6 @@ public class StartPomorodoController {
 		        }else{
 		        	borderPaneAll.setLayoutX(0);
 		        }
-		        
-		        /**
-		        if(newSceneWidth.intValue() > 200.0 && newSceneWidth.intValue() < 350){
-			        lbTimer.setFont(new Font("Verdana", (double) newSceneWidth - 150));
-		        }
-		        **/
 		    }
 		});
 		
