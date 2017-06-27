@@ -34,6 +34,7 @@ public class TimeKeeper {
 	private String currentProject = "All Pomorodo";
 	private boolean playing = false;
 	private boolean paused = false;
+	private boolean timerDone = false;
 	
 	private Label lbTimer;
 	private Button btnPlayAndPause;
@@ -161,7 +162,9 @@ public class TimeKeeper {
 				paused = false;
 			}
 			
+			timerDone = false;
 			playing = true;
+			
 			timer = new Timeline();
 			timer.setCycleCount(Timeline.INDEFINITE);
 			KeyFrame frame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
@@ -194,10 +197,12 @@ public class TimeKeeper {
 	            		
 						toolkit.beep();
 						timer.stop();
+						
 						if(contiousMode.equals(yesKeyWord)){
 							playAndPause();
 						}else{
 							System.out.println("Timer Finished");
+							timerDone = true;
 							spinnerProjects.setDisable(false);
 							hboxBottom.setStyle(pauseColor);
 							hboxCenter.setStyle(pauseColor);
@@ -277,24 +282,28 @@ public class TimeKeeper {
 	 * @return
 	 */
 	public void hardReset(String newProjectName){
-		Calendar cal = Calendar.getInstance();
-		
-		pref.put(currentProjectPrefString, newProjectName);
 		
 		btnPlayAndPause.setText(play);
 		hboxBottom.setStyle(pauseColor);
 		hboxCenter.setStyle(pauseColor);
 		hboxTop.setStyle(pauseColor);
+		
+		
+		pref.put(currentProjectPrefString, newProjectName);
 
 		pref.putInt(currentProject, ((pref.getInt(currentProject, 0) + overAllTimeCountedInCurrentProject)));
 		pref.putInt((currentProject + totalKeyWord), (pref.getInt((currentProject + totalKeyWord), 0) + overAllTimeCountedInCurrentProject));
+		Calendar cal = Calendar.getInstance();
 		pref.putInt((currentProject + spaceKeyWord + cal.get(Calendar.DAY_OF_WEEK)), ((pref.getInt((currentProject + spaceKeyWord + cal.get(Calendar.DAY_OF_WEEK)), 0) + overAllTimeCountedInCurrentProject)));
 		
 		pref.putInt(totalTimeWorkingPrefString, ((pref.getInt(totalTimeWorkingPrefString, 0) + overAllTimeCountedInCurrentProject)));
 
 		currentProject = newProjectName;
 		
-		timeCountDownTracker = workTimeDuration;
+		whichTimerPeriodIsPlaying = 3;
+		//timeCountDownTracker = workTimeDuration;
+		breakOrWorkTracker = 1;
+		
 		overAllTimeCountedInCurrentProject = 0;
 		updateValues(workTimeDuration);
 		
@@ -303,6 +312,7 @@ public class TimeKeeper {
 			playing = false;
 			paused = false;
 		}
+		
 	}
 	
 	/**
@@ -333,14 +343,20 @@ public class TimeKeeper {
 	 * TODO we have to find a way to add the mintues to the work or break period it was just in
 	 */
 	public void addFiveMinutes(){
-		timeCountDownTracker += 5*60;
-		if(btnPlayAndPause.getText().equals(play)){
+
+		if(playing == true){
+			timeCountDownTracker += 5*60;
+		}
+		
+		if(timerDone == true){
+			
 			System.out.println("Extra Start");
 			spinnerProjects.setDisable(true);
 			hboxBottom.setStyle(playColor);
 			hboxCenter.setStyle(playColor);
 			hboxTop.setStyle(playColor);
 			btnPlayAndPause.setText(pause);
+			
 			if(paused == false){
 				if(pref.getBoolean(resumePrefString, false) == false){
 					timeCountDownTracker = extraTimeDuration;
