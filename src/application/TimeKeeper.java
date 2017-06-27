@@ -29,6 +29,7 @@ public class TimeKeeper {
 	private int whichTimerPeriodIsPlaying = 3;
 	private int amountOfShortBreaksLeftTillLongBreak = 3;
 	private int amountOfShortBreaksLeftTillLongBreakTracker = 3;
+	private int currentTimerDuringExtraTimer;
 
 	private String contiousMode;
 	private String currentProject = "All Pomorodo";
@@ -147,11 +148,17 @@ public class TimeKeeper {
 					int timeDuration;
 					
 					if(whichTimerPeriodIsPlaying == 1){
-						timeDuration = 	longBreakTimeDuration;
-					}else if(whichTimerPeriodIsPlaying == 2){
+						System.out.println("Short Break");
 						timeDuration = 	shortBreakTimeDuration;
-					}else {
+					}else if(whichTimerPeriodIsPlaying == 2){
+						System.out.println("Long Break");
+						timeDuration = 	longBreakTimeDuration;
+					}else if(whichTimerPeriodIsPlaying == 3){
+						System.out.println("Work Period");
 						timeDuration = 	workTimeDuration;
+					}else{
+						System.out.println("Extra Time");
+						timeDuration = timeCountDownTracker;
 					}
 					
 					timeCountDownTracker = timeDuration;
@@ -258,11 +265,27 @@ public class TimeKeeper {
 		if(playing == true || paused == true){
 			
 			int timeDuration;
+
+			if(whichTimerPeriodIsPlaying == 4){
+				if(currentTimerDuringExtraTimer == 1 || currentTimerDuringExtraTimer == 2){
+					whichTimerPeriodIsPlaying = 3;
+				}else{
+					if(amountOfShortBreaksLeftTillLongBreakTracker == amountOfShortBreaksLeftTillLongBreak){
+						whichTimerPeriodIsPlaying = 1;
+					}else{
+						whichTimerPeriodIsPlaying = 2;
+					}
+				}
+			}
+			
 			if(whichTimerPeriodIsPlaying == 1){
-				timeDuration = 	longBreakTimeDuration;
-			}else if(whichTimerPeriodIsPlaying == 2){
+				System.out.println("Short Break");
 				timeDuration = 	shortBreakTimeDuration;
-			}else {
+			}else if(whichTimerPeriodIsPlaying == 2){
+				System.out.println("Long Break");
+				timeDuration = 	longBreakTimeDuration;
+			}else{
+				System.out.println("Work Time");
 				timeDuration = 	workTimeDuration;
 			}
 			
@@ -345,7 +368,7 @@ public class TimeKeeper {
 	public void addFiveMinutes(){
 
 		if(playing == true){
-			timeCountDownTracker += 5*60;
+			timeCountDownTracker += extraTimeDuration;
 		}
 		
 		if(timerDone == true){
@@ -357,47 +380,18 @@ public class TimeKeeper {
 			hboxTop.setStyle(playColor);
 			btnPlayAndPause.setText(pause);
 			
-			if(paused == false){
-				if(pref.getBoolean(resumePrefString, false) == false){
-					timeCountDownTracker = extraTimeDuration;
-				}else{
-					pref.putBoolean(resumePrefString, false);
-				}
-			}else{
-				paused = true;
+			currentTimerDuringExtraTimer = whichTimerPeriodIsPlaying;
+			
+			if(amountOfShortBreaksLeftTillLongBreakTracker == amountOfShortBreaksLeftTillLongBreak){
+				amountOfShortBreaksLeftTillLongBreakTracker = -1;
+			}else{				
+				amountOfShortBreaksLeftTillLongBreakTracker++;
 			}
+			timeCountDownTracker += extraTimeDuration;
 			whichTimerPeriodIsPlaying = 4;
-			playing = true;
-			extraTimeLine = new Timeline();
-			extraTimeLine.setCycleCount(Timeline.INDEFINITE);
-			KeyFrame frame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					overAllTimeCountedInCurrentProject++;
-	            	if(timeCountDownTracker > 0){
-						updateValues(timeCountDownTracker);
-	            		System.out.println(timeCountDownTracker);
-	            		timeCountDownTracker--;
-	            	}else{
-						updateValues(timeCountDownTracker);
-	            		playing = false;
-	            		toolkit.beep();
-	            		extraTimeLine.stop();
-						if(contiousMode.equals(yesKeyWord)){
-							playAndPause();
-						}else{
-							System.out.println("Work Finished");
-							spinnerProjects.setDisable(false);
-							hboxBottom.setStyle(pauseColor);
-							hboxCenter.setStyle(pauseColor);
-							hboxTop.setStyle(pauseColor);
-							btnPlayAndPause.setText(play);
-						}
-	            	}
-				}
-			});
-			extraTimeLine.getKeyFrames().add(frame);
-			extraTimeLine.playFromStart();
+    		breakOrWorkTracker *= -1;
+			
+			playAndPause();
 		}
 		
 	}
