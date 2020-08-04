@@ -1,0 +1,235 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+/**
+***************************************************
+* IMPORTANT STYLES
+****************************************************
+**/
+.root { -fx-focus-color: transparent; }
+
+.title_main{
+    -fx-text-color: black;
+    -fx-font-weight: bold;
+    -fx-font-size: 1.5em;
+}
+.header{
+    -fx-padding: 1.0em 0.8em 1.0em 0.8em;
+}
+.button: hover{
+    -fx-cursor: hand;
+}
+/**
+***************************************************
+* BUTTON STYLES
+****************************************************
+**/
+.deleteBtn {
+	-fx-text-fill: #FFFFFF;
+	-fx-background-color: #F44336;
+	-fx-font-weight: bold;
+	-fx-border-radius: 0;
+}
+.deleteBtn:hover{
+	-fx-text-fill: #000000;
+	-fx-background-color: #FFFFFF;
+	-fx-font-weight: bold;
+	-fx-border-radius: 0 0 0 0;
+	-fx-font-weight: bold;
+	-fx-effect: dropshadow( three-pass-box , rgba(244,240,174,0.6) , 5, 0.0 , 0 , 1 );
+}
+
+.addBtn{
+	-fx-text-fill: #FFFFFF;
+	-fx-background-color: #69F0AE;
+	-fx-font-weight: bold;
+	-fx-border-radius: 0;
+}
+
+.addBtn:hover{
+	-fx-text-fill: #000000;
+	-fx-background-color: #FFFFFF;
+	-fx-font-weight: bold;
+	-fx-border-radius: 0 0 0 0;
+	-fx-font-weight: bold;
+	-fx-effect: dropshadow( three-pass-box , rgba(105,255,3,0.6) , 5, 0.0 , 0 , 1 );
+}
+
+
+.actionBtn {
+	-fx-text-fill: #FFFFFF;
+	-fx-background-color: #000000;
+	-fx-font-weight: bold;
+	-fx-border-radius: 0;
+}
+
+.actionBtn:hover{
+	-fx-text-fill: #000000;
+	-fx-background-color: #FFFFFF;
+	-fx-font-weight: bold;
+	-fx-border-radius: 0 0 0 0;
+	-fx-font-weight: bold;
+}
+
+/**
+***************************************************
+* TEXT FIELD STYLES
+****************************************************
+**/
+.textField{
+	-fx-background-color: rgba(0,0,0,0.2);
+    -fx-text-box-border: transparent;
+    -fx-border-color: transparent;
+}
+
+/**
+***************************************************
+* BACKGROUND STYLES
+****************************************************
+**/
+.settingsBackground{
+	-fx-background-color: #F5E181;
+}
+.settingsHeader {
+	-fx-background-color: #FCBD44;
+}
+
+.chartHeader {
+	-fx-background-color: #FF534D;
+}
+.chartBackground{
+	-fx-background-color: #FAA189;
+}
+/**
+***************************************************
+* CHART STYLES
+****************************************************
+**/
+/****** LINE CHART*******/
+.axis {
+    -fx-font-size: 1.4em;
+    -fx-tick-label-fill: black;
+    -fx-font-family: Tahoma;
+    -fx-tick-length: 10;
+    -fx-tick-width: 0;
+    -fx-tick-color: transparent;
+    -fx-minor-tick-length: 0;
+}
+.axis-tick-mark {
+    -fx-stroke: transparent;
+    -fx-stroke-width: 0;
+}
+.axis-minor-tick-mark {
+    -fx-stroke: transparent;
+}
+.chart-series-line {
+    -fx-stroke-width: 0.2em;
+    -fx-effect: null;
+    -fx-stroke: #FF534D;
+}
+.chart{
+    -fx-border-color: transparent;
+}
+.axis-label {
+   -fx-text-fill: black;
+}
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+.chart-vertical-grid-lines {
+    -fx-stroke: transparent;
+}
+.chart-horizontal-grid-lines {
+    -fx-stroke: transparent;
+}
+.chart-alternative-row-fill {
+    -fx-fill: transparent;
+    -fx-stroke: transparent;
+    -fx-stroke-width: 0;
+}
+
+/****** PIE CHART*******/
+.chart-legend {
+   -fx-background-color:  transparent;
+}
+
+/**
+***************************************************
+* PROGRESS BAR STYLES
+****************************************************
+**/
+.progress-bar{
+    -fx-accent: #FF534D;
+    -fx-text-box-border: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-color: white;
+}
+.progress-bar .bar{
+    -fx-background-insets: 0;
+}
+
+/**
+***************************************************
+* LIST VIEW STYLES
+****************************************************
+**/
+.list: focused{
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+.list {
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: #FCBD44;
+    -fx-text-fill: black;
+}
+    -fx-background-insets: 0;
+
+.list-cell:even { /* <=== changed to even */
+    -fx-background-color: white;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: #F5E181;
+    -fx-text-fill: black;
+}
+
+/**
+***************************************************
+* SPINNER STYLES
+****************************************************
+**/
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-body-color: white;
+    -fx-background-color: white;
+}
+
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover {
+    -fx-body-color: grey;
+    -fx-background-color: black;
+}
+
+.spinner .increment-arrow-button:hover:pressed,
+.spinner .decrement-arrow-button:hover:pressed,
+.spinner .increment-arrow-button:pressed,
+.spinner .decrement-arrow-button:pressed {
+    -fx-body-color: black;
+    -fx-background-color: black;
+}
+/**
+***************************************************
+* OTHER STYLES
+****************************************************
+**/
+/*
+   -fx-stroke: #daa520;
+ * Main page background
+ */
+.mainPageBackground{
+	-fx-background-color: #FF534D;
+}

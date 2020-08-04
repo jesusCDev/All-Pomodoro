@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="bpAll" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="0.0" prefHeight="636.0" prefWidth="896.0" styleClass="chartBackground" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.allvens.controller.Chart">
+   <center>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <PieChart fx:id="pcDailyData">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </PieChart>
+            <Label text="Weekly View">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </Label>
+            <Spinner fx:id="spProjects">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </Spinner>
+            <LineChart fx:id="lcWeeklyData">
+              <xAxis>
+                <CategoryAxis side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis side="LEFT" />
+              </yAxis>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </LineChart>
+            <HBox alignment="CENTER" spacing="30.0">
+               <children>
+                  <Label fx:id="lbProjectTotalMin" text="Total Mintues:" />
+                  <Label fx:id="lbProjectTodayMin" text="Today's Minutes:" />
+                  <Label fx:id="lbProjectThousandHourProgress" text="Ten Thousand Hours Complete: 0%" />
+               </children>
+            </HBox>
+            <ProgressBar fx:id="pbThousandHourProgress" prefWidth="743.0" progress="0.0">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </ProgressBar>
+            <HBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <DatePicker fx:id="dpMinAddSubtract" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="250.0" />
+                  <Label text="Minutes:" />
+                  <TextField fx:id="tfTimeManager" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="235.0" styleClass="textField" />
+                  <Button mnemonicParsing="false" onAction="#btn_addMinutes" styleClass="actionBtn" text="Add" />
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#btn_subtractMinutes" prefHeight="26.0" prefWidth="113.0" styleClass="actionBtn" text="Subtract" />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+   <top>
+      <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <VBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#btn_ScreenChange_Home" styleClass="actionBtn" text="Back" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" GridPane.columnIndex="1">
+               <children>
+                  <Label styleClass="title_main" text="Stats">
+                     <font>
+                        <Font name="System Bold" size="17.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" GridPane.columnIndex="2" />
+         </children>
+         <styleClass>
+            <String fx:value="header" />
+            <String fx:value="chartHeader" />
+         </styleClass>
+      </GridPane>
+   </top>
+   <bottom>
+       <StackPane fx:id="spSnackbar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" BorderPane.alignment="CENTER" />
+   </bottom>
+</BorderPane>
